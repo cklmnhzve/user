@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- tblNameCN:角色信息 llbtmp_role -->
+<mapper namespace="role">
+	<resultMap type="java.util.HashMap" id="roleBaseMap">
+        <result column="id" javaType="java.lang.Long" property="id"/>  <!-- id -->
+        <result column="name" javaType="java.lang.String" property="name"/>  <!-- 角色名称-->
+        <result column="EXPLAINS" javaType="java.lang.String" property="explains"/>  <!-- 说明-->
+        <result column="OPERATE_TYPE" javaType="java.lang.String" property="operateType" />  <!-- 操作类型 -->
+        <result column="DEAL_STATUS" javaType="java.lang.String" property="dealStatus" />  <!-- 处理状态 -->
+		<result column="OPERATOR_ID" javaType="java.lang.String" property="operator" />
+		<result column="REVIEWER_ID" javaType="java.lang.String" property="reviewer" /> 
+		<result column="SUBMIT_DATE" javaType="java.lang.String" property="submitDate" /> 
+		<result column="REVIEW_DATE" javaType="java.util.Date" property="reviewDate" />  
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="roleExtendMap" extends="roleBaseMap">
+	</resultMap>
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="id != null">  and (M.ID = #{id} ) </if>
+        <if test="name != null">  and (M.NAME = #{name} ) </if>
+        <if test="operateType != null">  and (M.OPERATE_TYPE = #{operateType} ) </if>
+        <if test="dealStatus != null">  and (M.DEAL_STATUS = #{dealStatus} ) </if>
+	</sql>
+	<sql id="querySqlDim">
+        <if test="id != null and id != '' ">  and (M.ID like '%'||#{id}||'%' ) </if>
+        <if test="name != null and name != '' ">  and (M.NAME like '%'||#{name}||'%' ) </if>
+        <if test="operateType != null and operateType != '' ">  and (M.OPERATE_TYPE like '%'||#{operateType}||'%' ) </if>
+        <if test="dealStatus != null and dealStatus != '' ">  and (M.DEAL_STATUS like '%'||#{dealStatus}||'%' ) </if>
+	</sql>
+	<select id="select_role_withPage" resultMap="roleExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+       SELECT M.ID,M.NAME,decode(M.OPERATE_TYPE,'A','新增','U','修改','D','删除') OPERATE_TYPE,decode(M.DEAL_STATUS,'0'
+    ,'待审核','1','审核通过','2','审核不通过' )DEAL_STATUS,n.name operator_id,to_char(m.submit_date,'yyyy-MM-dd HH24:mi:ss') submit_date from llbtmp_role m,llbtmp_admin n
+   		where m.operator_id=n.id
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	
+	<!-- 根据条件查询满足条件的(角色信息)记录数  -->
+	<select id="select_role_count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from llbtmp_role m
+		 where 1=1
+		<include refid="querySqlDim"/>
+	</select>
+	
+</mapper>

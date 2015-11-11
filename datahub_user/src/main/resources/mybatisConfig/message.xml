@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- LLBTMP_message:消息表 -->
+<mapper namespace="message">
+  <resultMap id="messageMap" type="_Message">
+    <id property="id" column="id" />
+    <result property="title" column="title"/>
+    <result property="content" column="content"/>
+    <result property="picture" column="picture" jdbcType="BLOB" />
+    <result property="startTime" column="start_time"  />
+    <result property="endTime" column="end_time"  />
+    <result property="resourceId" column="resource_id"  />
+    <result property="relatedType" column="related_type"  />
+    <result property="submitDate" column="submit_date"  />
+    <result property="reviewDate" column="review_date"  />
+    <result property="target" column="target"  />
+    <result property="operateType" column="operate_type"  />
+    <result property="dealStatus" column="deal_status"  />
+    <result property="runStatus" column="run_status"  />
+    <result property="buttonText" column="buttonText"  />
+  </resultMap>
+	
+  <resultMap id="messageMap2" type="_Message"  extends="messageMap">  
+     <association property="branch" column="branch" select="getBranch"></association>
+     <association property="operator" column="operator_id" select="getOperator"></association>
+     <association property="reviewer" column="reviewer_id" select="getReviewer"></association>
+  </resultMap>
+  
+  <select id="getBranch" resultType="_Branch">
+	select id,branch_name branchName,branch_code branchCode,region,REGION_EN gegionEn from llbtmp_branch where id = #{xxx}     
+  </select>
+  <select id="getOperator" resultType="_SessionVo">
+	select * from llbtmp_admin where id = #{xxx}
+  </select>
+  <select id="getReviewer" resultType="_SessionVo">
+	select * from llbtmp_admin where id = #{xxx}
+  </select>
+
+	
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="relatedType != null">  and (M.related_type = #{relatedType} ) </if>
+        <if test="dealStatus != null">  and (M.deal_status = #{dealStatus} ) </if>
+        
+	</sql>
+	
+    <sql id="querySqlDim">
+        <if test="branch != null and branch != '' ">  and (M.branch like '%'||#{branch}||'%' ) </if>
+        <if test="dealStatus != null and dealStatus != '' ">  and (M.deal_status like '%'||#{dealStatus}||'%' ) </if>
+	</sql>
+	
+	<insert id="addMessage2" parameterType="_Message">
+	  insert into LLBTMP_MESSAGE(id,title,content,start_time,end_time,related_type,operate_type,deal_status,submit_date,operator_id,resource_id) 
+	  values(#{id},#{title},#{content},to_date(#{startTime,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss'),
+	  #{relatedType},#{operateType},#{dealStatus},to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'),
+	  #{operator.id,jdbcType=INTEGER},#{resourceId,jdbcType=BIGINT})
+	</insert> 
+
+	<insert id="addMessage0" parameterType="_Message">
+	  insert into LLBTMP_MESSAGE(id,title,content,start_time,end_time,related_type,operate_type,deal_status,submit_date,operator_id,resource_id,picture) 
+	  values(#{id},#{title},#{content},to_date(#{startTime,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),to_date(#{endTime},'yyyy-mm-dd hh24:mi:ss'),
+	  #{relatedType},#{operateType},#{dealStatus},to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'),
+	  #{operator.id,jdbcType=INTEGER},#{resourceId,jdbcType=BIGINT},empty_blob())
+	</insert> 
+	
+	<select id="queryMessage" parameterType="_Message" resultMap="messageMap">
+	  select * from llbtmp_ad where channel=#{channel.id} and ad_pos=#{adPos.id} and branch=#{branch.id} 
+	</select>
+	
+	
+	
+	<select id="getMessageById" parameterType="long" resultType="_Message">
+	  select * from llbtmp_message where id = #{xxx} for update
+	</select>
+	
+   
+   <select id="getMessageDetail" parameterType="long" resultMap="messageMap2">
+     select * from llbtmp_message where id=#{id}
+   </select>
+   <select id="getMessagePicture" parameterType="long" resultMap="messageMap">
+     select * from llbtmp_message where id=#{id}
+   </select>
+  
+   <update id="updMessageDel" parameterType="_Message" >
+     update llbtmp_message set operate_type = #{operateType}, operator_id=#{operator.id},
+     submit_date=to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'),deal_status=#{dealStatus}
+     where id = #{id}
+   </update>
+   <select id="selectMessageAmount" resultType="int">
+     select count(*) from llbtmp_message m where 1 = 1 and run_status is null and deal_status = '0'
+     <include refid="querySql"/>
+   </select>
+   <select id="selectSomeMessage" resultType="int">
+     select count(*) from llbtmp_message m where 1 = 1 and run_status is null
+     <include refid="querySql"/>
+   </select>
+   
+   <select id="selectRunMessageAmount" resultType="int">
+     select count(*) from llbtmp_message m where 1 = 1 and run_status = 'R' and
+     <![CDATA[
+     start_time <= to_date(#{nowtime},'yyyy-mm-dd hh24:mi:ss') and end_time > to_date(#{nowtime},'yyyy-mm-dd hh24:mi:ss')
+     ]]>
+     <include refid="querySql"/>
+   </select>
+   <!-- 根据条件分页查询(待复核)消息信息  -->
+   <select id="select_message_withPage" parameterType="java.util.Map" resultMap="messageMap2" >
+	SELECT * FROM (
+	SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      select * from llbtmp_message m where 1 = 1
+	  <include refid="querySql"/> and run_status is null and deal_status = '0'
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+   </select>
+   <!-- 根据条件分页查询消息信息  -->
+   <select id="select_message_withPage2" parameterType="java.util.Map" resultMap="messageMap2" >
+	SELECT * FROM (
+	SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      select * from llbtmp_message m where 1 = 1
+	  <include refid="querySql"/> and run_status is null
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+   </select>
+   <!-- 根据条件分页查询(运行的广告信息)信息  -->
+   <select id="select_runMessage_withPage" parameterType="java.util.Map" resultMap="messageMap2" >
+	SELECT * FROM (
+	SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      select * from llbtmp_message m where 1 = 1 and run_status = 'R' and
+      <![CDATA[
+       start_time <= to_date(#{nowtime},'yyyy-mm-dd hh24:mi:ss') and end_time > to_date(#{nowtime},'yyyy-mm-dd hh24:mi:ss')
+      ]]>
+	  <include refid="querySql"/> 
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+   </select>
+  
+   <delete id="delMessageById" parameterType="long">
+     delete from llbtmp_message where id = #{xxx}
+   </delete>
+   <insert id="addOneMessage" parameterType="java.util.Map">
+	insert into LLBTMP_message
+	(
+	ID,
+	TITLE,
+	CONTENT,
+	PICTURE,
+	START_TIME,
+	END_TIME,
+	RESOURCE_ID,
+	RELATED_TYPE,
+	BRANCH,
+	OPERATOR_ID,
+	REVIEWER_ID,
+	SUBMIT_DATE,
+	REVIEW_DATE,
+	TARGET,
+	OPERATE_TYPE,
+	DEAL_STATUS,
+	run_status,
+	BUTTONTEXT
+	)
+	select
+	#{idNew},
+	TITLE,
+	CONTENT,
+	PICTURE,
+	START_TIME,
+	END_TIME,
+	RESOURCE_ID,
+	RELATED_TYPE,
+	BRANCH,
+	OPERATOR_ID,
+	REVIEWER_ID,
+	SUBMIT_DATE,
+	REVIEW_DATE,
+	TARGET,
+	OPERATE_TYPE,
+	DEAL_STATUS,
+	run_status,
+	BUTTONTEXT
+	from LLBTMP_message where id = #{idOld}
+   </insert>
+   <update id="updateNewMessage1" parameterType="_Message" >
+     update llbtmp_message set 
+     target=#{target},run_status=#{runStatus,jdbcType=VARCHAR}
+     where id = #{id}
+   </update>
+    <update id="updateNewMessage" parameterType="_Message" >
+     update llbtmp_message set title=#{title}, content=#{content},operate_type = #{operateType}, operator_id=#{operator.id},
+     submit_date=to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'),deal_status=#{dealStatus}
+     where id = #{id}
+   </update>
+   <update id="updateOldMessage" parameterType="_Message">
+     update llbtmp_message set deal_status=#{dealStatus}, operate_type=#{operateType},operator_id=#{operator.id},submit_date=to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss') 
+     where id = #{id}
+   </update>
+   <update id="checkMessageAbled" parameterType="_Message">
+     update llbtmp_message set deal_status=#{dealStatus},reviewer_id=#{reviewer.id},review_date=to_date(#{reviewDate},'yyyy-mm-dd hh24:mi:ss'),
+     run_status=#{runStatus} 
+     where id = #{id}     
+   </update>
+    <update id="checkMessageDisabled" parameterType="_Message">
+     update llbtmp_message set deal_status=#{dealStatus},reviewer_id=#{reviewer.id},review_date=to_date(#{reviewDate},'yyyy-mm-dd hh24:mi:ss')
+     where id = #{id}     
+   </update>
+   <update id="updMessage2" parameterType="_Message" >
+     update llbtmp_message set adContent = #{adContent},operate_type = #{operateType}, operator_id=#{operator.id},
+     submit_date=to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'),deal_status=#{dealStatus}
+     where id = #{id}
+   </update>
+   
+		
+
+
+</mapper>

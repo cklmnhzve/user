@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- LLBTMP_APP:app branch Biao -->
+<mapper namespace="AppBranch2">
+   <resultMap id="getBranchMap" type="_AppBranch">
+	<result property="appId" column="app_id"/>
+	<result property="branchId" column="branch_id"/>
+  </resultMap>
+	
+	<sql id="appBranch">  
+         app_id,branch_id
+	</sql>  
+	
+	<update id="updateAppBranch">
+		update llbtmp_app_branch set  
+		 
+		<if test="branchId != null and branchId != ''"> branch_id=#{branchId,jdbcType=NUMERIC}</if>
+		where app_id = #{appId}
+	</update>
+	
+	<insert id="appInsert" parameterType="_AppBranch">  
+         INSERT INTO LLBTMP_APP_BRANCH (<include refid="appBranch" />)  
+        values (  
+         #{appId},#{branchId}
+        )  
+	</insert>
+	
+	<select id="selectByName" parameterType="long">
+		select * from llbtmp_branch b , llbtmp_app_branch c where b.id = c.branch_id and c.app_id = #{id}
+	</select>
+</mapper>

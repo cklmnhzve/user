@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 门店 xml -->
+<mapper namespace="store">
+
+  <resultMap id="store" type="_Store">
+    <id property="id" column="id"/>
+	<result property="address" column="address"/>
+	<result property="latitude" column="latitude"/>
+	<result property="linkphone" column="linkphone"/>
+	<result property="longitude" column="longitude"/>
+	<result property="name" column="name"/>
+	<result property="operateType" column="operate_type"/>
+	<result property="dealStatus" column="deal_status"/>
+	<result property="telephone" column="telephone"/>
+	<result property="icon" column="icon"/>
+	<result property="regionId" column="region_id"/>
+	<result property="operatorId" column="operator_id"/>
+	<result property="reviewerId" column="reviewer_id"/>
+	<result property="submitDate" column="submit_date"/>
+  </resultMap>
+  
+  <sql id="resultColumn">
+		 id,address,latitude,linkphone,longitude,name,operate_type,deal_status,telephone,icon,
+		 region_id,operator_id,reviewer_id,submit_date
+	</sql>
+  
+  <insert id="insert">
+  	INSERT INTO llbtmp_store (
+		<include refid="resultColumn" />
+		)
+		values (
+		#{id},
+		#{address,jdbcType=VARCHAR},
+		#{latitude,jdbcType=NUMERIC},
+		#{linkphone,jdbcType=VARCHAR},
+		#{longitude,jdbcType=NUMERIC},
+		#{name,jdbcType=VARCHAR},
+		#{operateType,jdbcType=VARCHAR},
+		#{dealStatus,jdbcType=VARCHAR},
+		#{telephone,jdbcType=NUMERIC},
+		empty_blob(),
+		#{regionId,jdbcType=NUMERIC},
+		#{operatorId,jdbcType=NUMERIC},
+		#{reviewerId,jdbcType=NUMERIC},
+		to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')
+		)	
+  	</insert>
+  	
+  	<select id="getAllStore" resultMap="store">
+  		select * from llbtmp_store order by id desc
+  	</select>
+  	
+  	<delete id="deleteStore">
+  		delete from llbtmp_store where id = #{id}
+  	</delete>
+  	
+  	<select id="getStoreById" parameterType="long" resultMap="store">
+  		select * from llbtmp_store where id = #{id}
+  	</select>
+  	
+  	<select id="getStoreByName" parameterType="long" resultMap="store">
+  		select * from llbtmp_store where id = #{sId}
+  	</select>
+</mapper>

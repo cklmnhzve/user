@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- LLBTMP_APP:应用表 -->
+<mapper namespace="appPic2">
+  <resultMap id="appPicMap" type="_AppPicture">
+  <!-- 图片编号 -->
+  <id property="id" column="id" />
+  <!-- 图片 -->
+  <result property="picture" column="picture"  />
+  <!-- 图片顺序 -->
+  <result property="sequence" column="sequence"  />
+  <!-- 应用编号 -->
+  <result property="appId" column="app_id"  />
+  	 
+	</resultMap>
+	
+	
+	<sql id="resultColumn">  
+         id,picture,sequence,app_id
+	</sql>  
+	
+	<insert id="insertAppPic" parameterType="_AppPicture">  
+         INSERT INTO LLBTMP_APP_PICTURE (  
+        <include refid="resultColumn" />  
+        )  
+        values (  
+        llbtmp_app_picture_seq.nextval,#{picture},#{sequence,jdbcType=VARCHAR},#{appId,jdbcType=NUMERIC}
+        )  
+          
+	</insert>
+	
+	<insert id="insertNewAppPic" parameterType="java.util.HashMap">
+			insert into LLBTMP_APP_PICTURE(
+		<include refid="resultColumn" />
+		)
+		select 
+		#{picId},picture,sequence,#{deleteKey}
+		from LLBTMP_APP_PICTURE where   id=#{pId}
+	</insert>
+	
+	 <select id="getById" parameterType="long" resultMap="appPicMap">
+	 	select * from llbtmp_app_picture  where app_id = #{id}
+	 </select>
+
+</mapper>

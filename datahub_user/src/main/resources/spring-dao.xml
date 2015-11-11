@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	<!-- 扫描包下所有标注@Repository的DAO组件 -->
+ 
+	<context:component-scan base-package="com.ldp.*.dao" />
+	
+	<context:property-placeholder location="classpath:connection.properties"  ignore-unresolvable="true" />
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
+		p:url="${jdbc.url}" p:username="${jdbc.username}" p:password="${jdbc.password}"
+		p:validationQuery="select * from dual" />
+	<!-- sylAdd解决数据库Io 异常: Connection reset by peer: socket write error;  -->
+
+<!--	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
+<!--		<property name="jndiName">-->
+<!--			<value>${emanual.jndiName}</value>-->
+<!--		</property>-->
+<!--		<property name="jndiEnvironment">-->
+<!--			<props>-->
+<!--				<prop key="java.naming.factory.initial">weblogic.jndi.WLInitialContextFactory</prop>-->
+<!--				<prop key="java.naming.provider.url">t3://localhost:7001</prop>-->
+<!--			</props>-->
+<!--		</property>-->
+<!--	</bean>-->
+	
+	<!-- 配置Jdbc模板  -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" p:dataSource-ref="dataSource" />
+    
+    <!--配置SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis.cfg.xml"/>
+    </bean>
+    <bean id="SqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">  
+        <constructor-arg index="0" ref="sqlSessionFactory" />  
+    </bean> 
+    
+</beans>
