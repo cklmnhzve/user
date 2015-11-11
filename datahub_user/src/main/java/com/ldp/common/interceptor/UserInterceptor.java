@@ -26,6 +26,8 @@ public class UserInterceptor implements HandlerInterceptor
 		}
 		else 
 		{
+			/*
+			 
 			String username = (String) request.getSession().getAttribute("username");
 			if (username == null) 
 			{
@@ -33,11 +35,14 @@ public class UserInterceptor implements HandlerInterceptor
 				request.getContextPath();
 				request.getRequestDispatcher("/WEB-INF/jsp/login/login.jsp").forward(request, response);
 				return false;
+				
 			}
 			else
 			{
 				return true;
 			}
+			*/
+			return true ;
 		}
 	}
 

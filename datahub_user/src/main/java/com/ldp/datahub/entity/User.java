@@ -14,99 +14,170 @@ public class User
 	private int userType;
 	private int arrangType;
 	private String loginName;
-	private String email;
+	private String nickName;
 	private String loginPasswd;
 	private int sellLevel;
 
 
+
+	
 
 	public long getUserId()
 	{
 		return userId;
 	}
 
+
+
+
+
 	public void setUserId(long userId)
 	{
 		this.userId = userId;
 	}
+
+
+
+
 
 	public int getUserStatus()
 	{
 		return userStatus;
 	}
 
+
+
+
+
 	public void setUserStatus(int userStatus)
 	{
 		this.userStatus = userStatus;
 	}
+
+
+
+
 
 	public int getUserType()
 	{
 		return userType;
 	}
 
+
+
+
+
 	public void setUserType(int userType)
 	{
 		this.userType = userType;
 	}
+
+
+
+
 
 	public int getArrangType()
 	{
 		return arrangType;
 	}
 
+
+
+
+
 	public void setArrangType(int arrangType)
 	{
 		this.arrangType = arrangType;
 	}
+
+
+
+
 
 	public String getLoginName()
 	{
 		return loginName;
 	}
 
+
+
+
+
 	public void setLoginName(String loginName)
 	{
 		this.loginName = loginName;
 	}
 
-	public String getEmail()
+
+
+
+
+	public String getNickName()
 	{
-		return email;
+		return nickName;
 	}
 
-	public void setEmail(String email)
+
+
+
+
+	public void setNickName(String nickName)
 	{
-		this.email = email;
+		this.nickName = nickName;
 	}
+
+
+
+
 
 	public String getLoginPasswd()
 	{
 		return loginPasswd;
 	}
 
+
+
+
+
 	public void setLoginPasswd(String loginPasswd)
 	{
 		this.loginPasswd = loginPasswd;
 	}
+
+
+
+
 
 	public int getSellLevel()
 	{
 		return sellLevel;
 	}
 
+
+
+
+
 	public void setSellLevel(int sellLevel)
 	{
 		this.sellLevel = sellLevel;
 	}
 
+
+
+
+
 	@Override
 	public String toString()
 	{
 		return "User [userId=" + userId + ", userStatus=" + userStatus + ", userType=" + userType + ", arrangType="
-				+ arrangType + ", loginName=" + loginName + ", email=" + email + ", loginPasswd=" + loginPasswd
+				+ arrangType + ", loginName=" + loginName + ", nickName=" + nickName + ", loginPasswd=" + loginPasswd
 				+ ", sellLevel=" + sellLevel + "]";
 	}
+
+
+
+
+
 
 
 	

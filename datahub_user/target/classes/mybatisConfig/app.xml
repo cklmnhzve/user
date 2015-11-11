@@ -169,7 +169,7 @@
 	
 	<update id="update_dealStatus">
 		 update llbtmp_app set id=#{id}
-		 <if test="appEntrance != null and appEntrance != '' ">, app_entrance=#{appEntrance,jdbcType=VARCHAR}</if>
+		<if test="appEntrance != null and appEntrance != '' ">, app_entrance=#{appEntrance,jdbcType=VARCHAR}</if>
 		<if test="appPackage != null and appPackage != ''"> ,app_package=#{appPackage,jdbcType=VARCHAR}</if>
 		<if test="details != null and details != '' "> ,details=#{details,jdbcType=VARCHAR}</if>
 		<if test="downloadCount != null and downloadCount != '' "> ,download_count=#{downloadCount,jdbcType=VARCHAR}</if>

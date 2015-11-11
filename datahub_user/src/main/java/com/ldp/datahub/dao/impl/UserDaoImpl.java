@@ -21,19 +21,15 @@ public class UserDaoImpl implements UserDao
 	@Autowired
 	private DataSource dataSource;
 
-	public int userLoing(User user)
+	public int userLogng(User user)
 	{
 		return 1;
 	}
 
 	@Override
-	public User getOneUser(User user) throws SQLException
+	public User getOneUser(User user) 
 	{
-		user = new User();
-		user.setLoginName("lxy");
-		System.out.println("dao 成 =====================");
-		Connection c = dataSource.getConnection();
-		System.out.println(c);
+
 
 		 user = session.selectOne("user.getAlluser", user);
 		/*
@@ -45,6 +41,36 @@ public class UserDaoImpl implements UserDao
 		 System.out.println("user:  " + user);
 		 return user;
 		
+	}
+
+	/**
+	 * 根据用户名修改用户
+	 */
+	@Override
+	public int updateUser(User user)
+	{
+		int t = session.update("user.updateUser", user);
+		return t;
+	}
+
+	/**
+	 * 根据用户名删除用户
+	 */
+	@Override
+	public int deleteUser(User user)
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * 用户登录
+	 */
+	@Override
+	public int userLogin(User user)
+	{
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
