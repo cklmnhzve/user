@@ -1,5 +1,7 @@
 package com.ldp.datahub.service.impl;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +16,7 @@ public class UserServiceImpl implements UserService
 	private UserDao userDao;
 	
 	
-	public User getOneUser(User user)
+	public User getOneUser(User user) throws SQLException
 	{
 		return userDao.getOneUser(user);
 	}

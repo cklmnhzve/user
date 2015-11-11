@@ -1,5 +1,7 @@
 package com.ldp.datahub.action;
 
+import java.sql.SQLException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +26,11 @@ public class UserAction
 	
 	/**
 	 * 用户登录
+	 * @throws SQLException 
 	 */
 	@RequestMapping(value = "/users/auth", method = RequestMethod.GET)
 	@ResponseBody
-	public void userLogin()
+	public void userLogin() throws SQLException
 	{
 		
 		System.out.println("进入用户登录 ! ");

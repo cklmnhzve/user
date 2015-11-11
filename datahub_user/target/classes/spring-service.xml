@@ -11,13 +11,13 @@
 	<!-- 扫描包下所有标注@Service的服务组件 -->
 	<context:component-scan base-package="com.ldp.*.service" />
 	
-	<!-- 配置事务管理器 -->
+	<!-- 配置事务管理器 
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource" />
-
-	<!-- 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 -->
+-->
+	<!-- 通过AOP配置提供事务增强，让service包下所有Bean的所有方法拥有事务 
 	<aop:config proxy-target-class="true">
 		<aop:pointcut id="serviceMethod"
-			expression=" execution(* com.ldp.datahub.service.*.*(..))" />
+			expression="execution(* com.ldp.datahub.service.impl.*.*(..))" />
 		<aop:advisor pointcut-ref="serviceMethod" advice-ref="txAdvice" />
 	</aop:config>
 
@@ -26,6 +26,6 @@
 			<tx:method name="*" />
 		</tx:attributes>
 	</tx:advice>
-
+-->
 	<!-- TODO 待确认这样的配置是否正确 如何继续给别的service配置事务? -->
 </beans>

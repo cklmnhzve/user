@@ -42,7 +42,7 @@
         <if test="dealStatus != null and dealStatus != '' ">  and (M.DEAL_STATUS like '%'||#{dealStatus}||'%' ) </if>
 	</sql>
 	
-	<select id="select_admin_withPage" resultMap="adminExtendMap" parameterType="java.util.Map">
+	<select id="select_admin_withPage" resultMap="userMap" parameterType="java.util.Map">
 	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
 	FROM (
         SELECT M.ID,M.account,M.NAME,N.BRANCH_NAME BRANCH_ID,decode(GENDER,'M','男','F','女') GENDER,decode(CRED_TYPE,'A','身份证','B','军人身份证'，'C','护照','D','其他证件') CRED_TYPE,M.CRED_NUM,M.PHONE,M.CELLPHONE,M.NOTESEMAIL,M.EMAIL,
@@ -65,7 +65,7 @@
 		 where m.deal_status!=0
 		<include refid="querySqlDim"/>
 	</select>
-	<select id="select_admin_withPage_0" resultMap="adminExtendMap" parameterType="java.util.Map">
+	<select id="select_admin_withPage_0" resultMap="userMap" parameterType="java.util.Map">
 	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
 	FROM (
         SELECT M.ID,M.account,M.NAME,N.BRANCH_NAME BRANCH_ID,decode(GENDER,'M','男','F','女') GENDER,decode(CRED_TYPE,'A','身份证','B','军人身份证'，'C','护照','D','其他证件') CRED_TYPE,M.CRED_NUM,M.PHONE,M.CELLPHONE,M.NOTESEMAIL,M.EMAIL,

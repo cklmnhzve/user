@@ -100,4 +100,16 @@ public class User
 		this.sellLevel = sellLevel;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "User [userId=" + userId + ", userStatus=" + userStatus + ", userType=" + userType + ", arrangType="
+				+ arrangType + ", loginName=" + loginName + ", email=" + email + ", loginPasswd=" + loginPasswd
+				+ ", sellLevel=" + sellLevel + "]";
+	}
+
+
+	
+	
+
 }

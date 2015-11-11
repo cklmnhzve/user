@@ -10,11 +10,39 @@
  
 	<context:component-scan base-package="com.ldp.*.dao" />
 	
+	<bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="location" value="classpath:connection.properties" />  
+    </bean>  
+    <!--  
 	<context:property-placeholder location="classpath:connection.properties"  ignore-unresolvable="true" />
+	-->
+	 <!-- 定义一个 datasource 数据库连接池，这里使用了Apache DBCP，需要 commons-dbcp和commons-pool的包支持 -->  
+    <!-- 这里的${...}，引用了 jdbc.properties中的内容，使用户不需要查找XML文件中有关JDBC的配置片段 -->  
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" >  
+        <property name="driverClassName" value="${jdbc.driverClassName}" />  
+        <property name="url">  
+            <value>${jdbc.url}</value>  
+        </property>  
+        <property name="username">  
+            <value>${jdbc.username}</value>  
+        </property>  
+        <property name="password">  
+            <value>${jdbc.password}</value>  
+        </property>  
+        <property name="maxActive" value="2" />  
+        <property name="initialSize" value="1" />  
+        <property name="maxIdle" value="2" />  
+        <property name="minIdle" value="1" />  
+        <!-- 等待连接超时时间，30秒 -->  
+        <property name="maxWait" value="30000" />  
+    </bean>  
+	
+	<!--  
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
 		p:url="${jdbc.url}" p:username="${jdbc.username}" p:password="${jdbc.password}"
 		p:validationQuery="select * from dual" />
+	-->
 	<!-- sylAdd解决数据库Io 异常: Connection reset by peer: socket write error;  -->
 
 <!--	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
