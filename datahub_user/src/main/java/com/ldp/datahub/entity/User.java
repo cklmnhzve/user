@@ -14,7 +14,7 @@ public class User
 	private int userType;
 	private int arrangType;
 	private String loginName;
-	private String email;
+	private String nickeName;
 	private String loginPasswd;
 	private int sellLevel;
 
@@ -70,14 +70,13 @@ public class User
 		this.loginName = loginName;
 	}
 
-	public String getEmail()
-	{
-		return email;
+
+	public String getNickeName() {
+		return nickeName;
 	}
 
-	public void setEmail(String email)
-	{
-		this.email = email;
+	public void setNickeName(String nickeName) {
+		this.nickeName = nickeName;
 	}
 
 	public String getLoginPasswd()
@@ -104,7 +103,7 @@ public class User
 	public String toString()
 	{
 		return "User [userId=" + userId + ", userStatus=" + userStatus + ", userType=" + userType + ", arrangType="
-				+ arrangType + ", loginName=" + loginName + ", email=" + email + ", loginPasswd=" + loginPasswd
+				+ arrangType + ", loginName=" + loginName + ", nickeName=" + nickeName + ", loginPasswd=" + loginPasswd
 				+ ", sellLevel=" + sellLevel + "]";
 	}
 
