@@ -9,7 +9,7 @@
         <result column="USER_TYPE"  property="userType"/>  <!-- 用户类型-->
         <result column="ARRANG_TYPE"  property="arrangType"/>  <!-- xxx -->
         <result column="LOGIN_NAME" property="loginName"/>  <!-- 用户名 -->
-        <result column="EMAIL" property="email"/>  <!-- 邮箱 -->
+        <result column="NICKE_NAME" property="nickeName"/>  <!-- 邮箱 -->
         <result column="LOGIN_PASSWD" property="loginPasswd"/>  <!-- 登录密码 -->
         <result column="SELL_LEVEL" property="sellLevel" />  <!-- 销售水平-->
 	</resultMap>
