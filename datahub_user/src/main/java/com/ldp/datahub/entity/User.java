@@ -14,7 +14,11 @@ public class User
 	private int userType;
 	private int arrangType;
 	private String loginName;
+<<<<<<< HEAD
 	private String nickName;
+=======
+	private String nickeName;
+>>>>>>> f3b413cd28d5d6c1eca06b2445b99f098ce90e55
 	private String loginPasswd;
 	private int sellLevel;
 
@@ -109,6 +113,7 @@ public class User
 	}
 
 
+<<<<<<< HEAD
 
 
 
@@ -124,6 +129,14 @@ public class User
 	public void setNickName(String nickName)
 	{
 		this.nickName = nickName;
+=======
+	public String getNickeName() {
+		return nickeName;
+	}
+
+	public void setNickeName(String nickeName) {
+		this.nickeName = nickeName;
+>>>>>>> f3b413cd28d5d6c1eca06b2445b99f098ce90e55
 	}
 
 
@@ -170,7 +183,11 @@ public class User
 	public String toString()
 	{
 		return "User [userId=" + userId + ", userStatus=" + userStatus + ", userType=" + userType + ", arrangType="
+<<<<<<< HEAD
 				+ arrangType + ", loginName=" + loginName + ", nickName=" + nickName + ", loginPasswd=" + loginPasswd
+=======
+				+ arrangType + ", loginName=" + loginName + ", nickeName=" + nickeName + ", loginPasswd=" + loginPasswd
+>>>>>>> f3b413cd28d5d6c1eca06b2445b99f098ce90e55
 				+ ", sellLevel=" + sellLevel + "]";
 	}
 
