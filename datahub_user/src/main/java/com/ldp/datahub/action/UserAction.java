@@ -69,7 +69,7 @@ public class UserAction
 	 */
 	@RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
 	@ResponseBody
-	public void getUser(@PathVariable String username,HttpServletRequest request, HttpServletResponse response) throws IOException
+	public void getUser(@PathVariable String username,HttpServletResponse response) throws IOException
 	{
 		User user = userService.getUser(username);
 		
@@ -90,8 +90,6 @@ public class UserAction
 			writer.close();
 		}
 		
-		
-		System.out.println("hello ldp user ! ");
 
 	}
 
@@ -109,7 +107,7 @@ public class UserAction
 	 * 修改用户,put 方式
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
+	@RequestMapping(value = "/users/{username}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void updateUser(@PathVariable String username,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{

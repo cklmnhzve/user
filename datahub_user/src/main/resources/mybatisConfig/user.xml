@@ -23,14 +23,14 @@
 		<if test="userType != null and userType != ''"> ,USER_TYPE=#{userType,jdbcType=VARCHAR}</if>
 		<if test="arrangType != null and arrangType != '' "> ,ARRANG_TYPE=#{arrangType,jdbcType=VARCHAR}</if>
 		<if test="loginName != null and loginName != '' "> ,LOGIN_NAME=#{loginName,jdbcType=VARCHAR}</if>
-		<if test="nickName != null and nickName != '' "> ,NICKE_NAME=#{nickName,jdbcType=VARCHAR}</if>
+		<if test="nickName != null and nickName != '' "> ,NICK_NAME=#{nickName,jdbcType=VARCHAR}</if>
 		<if test="loginPasswd != null and loginPasswd != '' "> ,LOGIN_PASSWD=#{loginPasswd,jdbcType=VARCHAR}</if>
 		<if test="sellLevel != null and sellLevel != '' "> ,SELL_LEVEL=#{sellLevel,jdbcType=VARCHAR}</if>
 		<!-- <if test="endTime != null and endTime != '' "> ,end_time=#{endTime,jdbcType=DATE}</if> -->
 		<!-- <if test="target != null and target != '' "> ,empty_blob()</if> -->
 	</sql>
 
-<!-- 
+<!-- -->
 	<sql id="querySql">
 		<if test="userId != null"> and (M.ID = #{id} ) </if>
 		<if test="account != null"> and (M.account = #{account} ) </if>
@@ -53,14 +53,14 @@
 		<if test="operateType != null and operateType != '' "> and (M.OPERATE_TYPE like '%'||#{operateType}||'%' ) </if>
 		<if test="dealStatus != null and dealStatus != '' "> and (M.DEAL_STATUS like '%'||#{dealStatus}||'%' ) </if>
 	</sql>
- -->
+ 
 	<update id="updateUser" parameterType="_User">
 		update DH_USER set LOGIN_NAME=#{loginName}
 		<include refid="updateSql" />
 		where LOGIN_NAME=#{loginName}
 	</update>
 	
-	<select id="searchUser" parameterType="_User" resultMap="_User">
+	<select id="searchUser" parameterType="_User" resultMap="userMap">
 		select * from DH_USER where LOGIN_NAME=#{loginName}
 	</select>
 
