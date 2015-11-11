@@ -51,25 +51,46 @@ public class UserAction
 	 * @throws SQLException
 	 */
 	// @RequestMapping(value = "/users/auth", method = RequestMethod.GET)
-	@ResponseBody
-	public void userLogin() throws SQLException
-	{
-
-		System.out.println("进入用户登录 ! ");
-		User user = new User();
-		User uu = userService.getOneUser(user);
-
-		System.out.println(uu);
-
-	}
+//	@ResponseBody
+//	public void userLogin() throws SQLException
+//	{
+//
+//		System.out.println("进入用户登录 ! ");
+//		User user = new User();
+//		User uu = userService.getOneUser(user);
+//
+//		System.out.println(uu);
+//
+//	}
 
 	/**
 	 * 根据用户名查询用户
+	 * @throws IOException 
 	 */
-	// @RequestMapping(value = "/users/:username", method = RequestMethod.GET)
+	@RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
 	@ResponseBody
-	public void getUser()
+	public void getUser(@PathVariable String username,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
+		User user = userService.getUser(username);
+		
+		response.setContentType("text/plain");
+		response.setCharacterEncoding("UTF-8");
+		Writer writer = null;
+		try {
+			writer = response.getWriter();
+			ObjectMapper mapper = new ObjectMapper();
+			String json = mapper.writeValueAsString(user.toString());
+			writer.write(json);
+
+		}
+		catch (IOException e) {
+			LogUtil.loggerException(e);
+		}
+		finally {
+			writer.close();
+		}
+		
+		
 		System.out.println("hello ldp user ! ");
 
 	}

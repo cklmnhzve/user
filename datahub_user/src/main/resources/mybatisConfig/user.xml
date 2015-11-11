@@ -3,27 +3,15 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- tblNameCN:工号信息 llbtmp_admin -->
 <mapper namespace="user">
-<<<<<<< HEAD
 	<resultMap id="userMap" type="_User">
 		<result column="USER_ID" property="userId" />  <!-- id -->
 		<result column="USER_STATUS" property="userStatus" />  <!-- 状态 -->
 		<result column="USER_TYPE" property="userType" />  <!-- 用户类型 -->
 		<result column="ARRANG_TYPE" property="arrangType" />  <!-- xxx -->
 		<result column="LOGIN_NAME" property="loginName" />  <!-- 用户名 -->
-		<result column="NICKE_NAME" property="nickName" />  <!-- 用户名 -->
+		<result column="NICK_NAME" property="nickName" />  <!-- 用户名 -->
 		<result column="LOGIN_PASSWD" property="loginPasswd" />  <!-- 登录密码 -->
 		<result column="SELL_LEVEL" property="sellLevel" />  <!-- 销售水平 -->
-=======
-	  <resultMap id="userMap" type="_User">
-        <result column="USER_ID"  property="userId"/>  <!-- id -->
-        <result column="USER_STATUS" property="userStatus"/>  <!-- 状态-->
-        <result column="USER_TYPE"  property="userType"/>  <!-- 用户类型-->
-        <result column="ARRANG_TYPE"  property="arrangType"/>  <!-- xxx -->
-        <result column="LOGIN_NAME" property="loginName"/>  <!-- 用户名 -->
-        <result column="NICKE_NAME" property="nickeName"/>  <!-- 邮箱 -->
-        <result column="LOGIN_PASSWD" property="loginPasswd"/>  <!-- 登录密码 -->
-        <result column="SELL_LEVEL" property="sellLevel" />  <!-- 销售水平-->
->>>>>>> f3b413cd28d5d6c1eca06b2445b99f098ce90e55
 	</resultMap>
 
 	<resultMap type="java.util.HashMap" id="userExtendMap"
@@ -42,6 +30,7 @@
 		<!-- <if test="target != null and target != '' "> ,empty_blob()</if> -->
 	</sql>
 
+<!-- 
 	<sql id="querySql">
 		<if test="userId != null"> and (M.ID = #{id} ) </if>
 		<if test="account != null"> and (M.account = #{account} ) </if>
@@ -64,12 +53,16 @@
 		<if test="operateType != null and operateType != '' "> and (M.OPERATE_TYPE like '%'||#{operateType}||'%' ) </if>
 		<if test="dealStatus != null and dealStatus != '' "> and (M.DEAL_STATUS like '%'||#{dealStatus}||'%' ) </if>
 	</sql>
-
+ -->
 	<update id="updateUser" parameterType="_User">
 		update DH_USER set LOGIN_NAME=#{loginName}
 		<include refid="updateSql" />
 		where LOGIN_NAME=#{loginName}
 	</update>
+	
+	<select id="searchUser" parameterType="_User" resultMap="_User">
+		select * from DH_USER where LOGIN_NAME=#{loginName}
+	</select>
 
 	<select id="select_admin_withPage" resultMap="userMap"
 		parameterType="java.util.Map">

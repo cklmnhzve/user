@@ -14,9 +14,9 @@ public class UserServiceImpl implements UserService
 	private UserDao userDao;
 	
 	
-	public User getOneUser(User user) 
+	public User getUser(String userName) 
 	{
-		return userDao.getOneUser(user);
+		return userDao.getUser(userName);
 	}
 
 

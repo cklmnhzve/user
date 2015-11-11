@@ -1,9 +1,5 @@
 package com.ldp.datahub.dao.impl;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +14,6 @@ public class UserDaoImpl implements UserDao
 	@Autowired
 	protected SqlSessionTemplate session;
 
-	@Autowired
-	private DataSource dataSource;
 
 	public int userLogng(User user)
 	{
@@ -27,18 +21,12 @@ public class UserDaoImpl implements UserDao
 	}
 
 	@Override
-	public User getOneUser(User user) 
+	public User getUser(String userName) 
 	{
-
-
-		 user = session.selectOne("user.getAlluser", user);
-		/*
-		 * Connection con = session.getConnection(); System.out.println(con);
-		 * System
-		 * .out.println("session +++++++++++++++++++++++++++++++++++++++++++++"
-		 * );
-		 */
-		 System.out.println("user:  " + user);
+		 User user = new User();
+		 user.setLoginName(userName);
+		 
+		 user = session.selectOne("user.searchUser", user);
 		 return user;
 		
 	}

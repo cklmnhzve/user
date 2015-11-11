@@ -9,7 +9,7 @@ public interface UserService
 	 * @param user
 	 * @return
 	 */
-	public User getOneUser(User user);
+	public User getUser(String userName);
 	
 	/**
 	 * 根据用户名修改用户
