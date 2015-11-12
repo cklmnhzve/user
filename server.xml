@@ -1,17 +1,3 @@
-Skip to content
-This repository  
-Pull requests
-Issues
-Gist
- @asiainfoliuxy
- Unwatch 5
-  Star 0
- Fork 2 asiainfoLDP/datahub_web
- Branch: master  datahub_web/server.xml
-56d3faf  on 12 Oct
-@yepengxj yepengxj new file: Dockerfile
-1 contributor
-RawBlameHistory     146 lines (128 sloc)  6.52 KB
 <?xml version='1.0' encoding='utf-8'?>
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
@@ -155,5 +141,3 @@ RawBlameHistory     146 lines (128 sloc)  6.52 KB
     </Engine>
   </Service>
 </Server>
-Status API Training Shop Blog About Pricing
-© 2015 GitHub, Inc. Terms Privacy Security Contact Help
