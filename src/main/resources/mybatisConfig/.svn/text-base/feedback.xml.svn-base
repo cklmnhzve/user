@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- LLBTMP_message:消息表 -->
+<mapper namespace="feedback">
+  <resultMap id="feedbackMap" type="_Feedback">
+    <id property="id" column="id" />
+    <result property="contact" column="contact"/>
+    <result property="content" column="content"/>
+    <result property="email" column="email" />
+    <result property="phone" column="phone"  />
+    <result property="submitDate" column="submit_date"  />
+    <result property="channelId" column="channel_id"  />
+    <result property="product" column="product"  />
+    <result property="version" column="version"  />
+  </resultMap>
+	
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="relatedType != null">  and (M.related_type = #{relatedType} ) </if>
+        <if test="dealStatus != null">  and (M.deal_status = #{dealStatus} ) </if>
+	</sql>
+	
+    <sql id="querySqlDim">
+        <if test="content != null and content != '' ">  and (m.content like '%'||#{content}||'%' ) </if>
+        <if test="contact != null and contact != '' ">  and (m.contact like '%'||#{contact}||'%' ) </if>
+        <if test="phone != null and phone != '' ">  and (m.phone like '%'||#{phone}||'%' ) </if>
+	</sql>
+	
+   <select id="selectFeedbackAmount" resultType="int">
+     select count(*) from llbtmp_feedback m where 1 = 1
+     <include refid="querySqlDim"/>
+   </select>
+      <!-- 根据条件分页查询意见信息  -->
+   <select id="select_feedback_withPage" parameterType="java.util.Map" resultMap="feedbackMap" >
+	SELECT * FROM (
+	SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      select * from llbtmp_feedback m where 1 = 1
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+   </select>
+
+   <select id="getFeedbackDetail" parameterType="long" resultMap="feedbackMap">
+	select * from llbtmp_feedback where id = #{id}
+   </select>
+
+
+
+</mapper>

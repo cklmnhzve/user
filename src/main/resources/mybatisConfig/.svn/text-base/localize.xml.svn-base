@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 城市 xml -->
+<mapper namespace="localize">
+
+  <resultMap id="localize" type="_Localize">
+    <id property="id" column="id"/>
+	<result property="operateType" column="operate_type"/>
+	<result property="status" column="status"/>
+	<result property="branchId" column="branch_id"/>
+	<result property="operatorId" column="operator_id"/>
+	<result property="reviewerId" column="reviewer_id"/>
+	<result property="submitDate" column="submit_date"/>
+	<result property="reviewDate" column="review_date"/>
+	<result property="branchName" column="branch_name"/>
+	<result property="statusName" column="status_name"/>
+  </resultMap>
+  
+  
+   <sql id="resultColumn">
+		 id,operate_type,status,branch_id,operator_id,
+		 reviewer_id,submit_date,review_date
+	</sql>
+	
+	
+	<select id="getAll" resultMap="localize">
+		select a.id ,decode ( a.status,'C','关闭','O','开通','o','待开通','c','待关闭') statusName , a.status ,  a.branch_id ,b.branch_name from llbtmp_localize a , llbtmp_branch b where a.branch_id = b.id
+	</select>
+	
+	
+	
+</mapper>

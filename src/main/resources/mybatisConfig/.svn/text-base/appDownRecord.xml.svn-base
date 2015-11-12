@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- LLBTMP_ADVERTISEMENT:广告表 -->
+
+<mapper namespace="appDownRecord">
+  <resultMap id="appDownRecordMap" type="_AppDownRecord">
+    <id property="id" column="id" />
+    <result property="channelType" column="channel_type" />
+    <result property="downloadTime" column="download_time"/>
+  </resultMap>
+  
+  <resultMap id="appDownRecordMap2" type="_AppDownRecord"  extends="appDownRecordMap">  
+    <association property="app" column="app_id" select="getTheApp"></association>
+  </resultMap>
+  
+  <select id="getTheApp" parameterType="long" resultType="_App">
+	select id,name from llbtmp_app where id = #{xxx}
+  </select>
+	
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="channelType != null and channelType != '' ">  and (m.channel_type = #{channelType} ) </if>
+        <if test="appId != null and appId != '' ">  and (m.app_id = #{appId} ) </if>
+	</sql>
+   
+   <select id="selectAppDownRecordAmount" resultType="long" parameterType="java.util.Map">
+     select count(*) from LLBTMP_APP_DOWNLOAD_RECORD m where 1 = 1
+     <include refid="querySql"/>
+   </select>
+   <!-- 根据条件分页查询(应用下载记录)信息  -->
+   <select id="select_appDownRecord_withPage" parameterType="java.util.Map" resultMap="appDownRecordMap2" >
+	SELECT * FROM (
+	SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      select * from LLBTMP_APP_DOWNLOAD_RECORD m where 1 = 1
+	  <include refid="querySql"/> 
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+   </select>
+  
+</mapper>

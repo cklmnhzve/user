@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- tblNameCN:商户信息 BS_MERCHANT -->
+<mapper namespace="merchant">
+	<resultMap type="java.util.HashMap" id="merchantBaseMap">
+        <result column="id" javaType="java.lang.Integer" property="id"/>  <!-- id -->        <result column="merchantNO" javaType="java.lang.String" property="merchantNO"/>  <!-- 商户号 -->        <result column="name" javaType="java.lang.String" property="name"/>  <!-- 商户名 -->        <result column="address" javaType="java.lang.String" property="address"/>  <!-- 商户地址 -->        <result column="PHONE" javaType="java.lang.String" property="phone"/>  <!-- 联系电话 -->        <result column="EMAIL" javaType="java.lang.String" property="email"/>  <!-- 商户邮箱 -->        <result column="certType" javaType="java.lang.String" property="certType"/>  <!-- 证书类型 -->        <result column="photo" javaType="java.lang.String" property="photo" />  <!-- 商户图片 -->
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="merchantExtendMap" extends="merchantBaseMap">
+	</resultMap>
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="id != null">  and (M.ID = #{id} ) </if>        <if test="merchantNO != null">  and (M.merchantNO = #{merchantNO} ) </if>        <if test="name != null">  and (M.NAME = #{name} ) </if>        <if test="address != null">  and (M.ADDRESS = #{address} ) </if>        <if test="phone != null">  and (M.PHONE = #{phone} ) </if>        <if test="email != null">  and (M.EMAIL = #{email} ) </if>        <if test="certType != null">  and (M.certType = #{certType} ) </if>        <if test="photo != null">  and (M.PHOTO = #{photo} ) </if>
+	</sql>
+	<sql id="querySqlDim">
+        <if test="id != null and id != '' ">  and (M.ID like '%'||#{id}||'%' ) </if>        <if test="merchantNO != null and merchantNO != '' ">  and (M.merchantNO like '%'||#{merchantNO}||'%' ) </if>        <if test="name != null and name != '' ">  and (M.NAME like '%'||#{name}||'%' ) </if>        <if test="address != null and address != '' ">  and (M.ADDRESS like '%'||#{address}||'%' ) </if>        <if test="phone != null and phone != '' ">  and (M.PHONE like '%'||#{phone}||'%' ) </if>        <if test="email != null and email != '' ">  and (M.EMAIL like '%'||#{email}||'%' ) </if>        <if test="certType != null and certType != '' ">  and (M.certType like '%'||#{certType}||'%' ) </if>        <if test="photo != null and photo != '' ">  and (M.photo like '%'||#{photo}||'%' ) </if>
+	</sql>
+	
+	<!-- 往(商户信息)新增一条记录。 -->
+    <insert id="insert_merchant" parameterType="java.util.HashMap">
+		INSERT INTO merchant(id,merchantNO,name,address,phone,email,certType,photo) 
+		VALUES(seq_merchant.nextval,#{merchantNO,jdbcType=CHAR},#{name,jdbcType=CHAR},#{address,jdbcType=VARCHAR},#{phone,jdbcType=CHAR},#{email,jdbcType=VARCHAR},#{certType,jdbcType=CHAR},#{photo})
+    </insert>
+
+	<!-- 根据条件查询(商户信息)信息。 -->
+	<select id="select_merchant" parameterType="java.util.HashMap" resultMap="merchantExtendMap">
+     SELECT M.ID,M.merchantNO,M.NAME,M.ADDRESS,M.PHONE,M.EMAIL,M.certType,M.PHOTO
+     from merchant m
+	 where 1=1 
+	 <include refid="querySqlDim"/>
+	 ORDER BY M.ID DESC
+	</select>
+	
+	<!-- 根据条件分页查询(商户信息)信息  -->
+	<select id="select_merchant_withPage" resultMap="merchantExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+      SELECT M.ID,M.merchantNO,M.NAME,M.ADDRESS,M.PHONE,M.EMAIL,M.certType,M.PHOTO
+	  from merchant m 
+	  where 1 = 1
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	
+	<!-- 根据序列号查询某个(商户信息)信息。 -->
+	<select id="select_merchant_byId" parameterType="java.lang.String" resultMap="merchantBaseMap">
+     SELECT M.ID,M.merchantNO,M.NAME,M.ADDRESS,M.PHONE,M.EMAIL,M.certType,M.PHOTO
+	 from merchant m
+	 where 1=1 and M.ID = #{id}
+	</select>
+	
+	<!-- 根据条件查询满足条件的(商户信息)记录数  -->
+	<select id="select_merchant_count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from merchant m
+		 where 1=1
+		<include refid="querySqlDim"/>
+	</select>
+	
+    <!-- 修改(商户信息)信息。 -->
+	<update id="update_merchant" parameterType="java.util.HashMap">
+		UPDATE merchant SET ID=#{id} 		<if test="merchantNO != null and merchantNO != '' "> ,merchantNO=#{merchantNO}</if> 		<if test="name != null and name != '' "> ,NAME=#{name}</if> 		<if test="address != null and address != '' "> ,ADDRESS=#{address}</if> 		<if test="phone != null and phone != '' "> ,PHONE=#{phone}</if> 		<if test="email != null and email != '' "> ,EMAIL=#{email}</if> 		<if test="certType != null and certType != '' "> ,certType=#{certType}</if> 		<if test="photo != null and photo != '' "> ,PHOTO=#{photo}</if>		WHERE ID=#{id}
+    </update>
+    
+    <!-- 根据序列号删除(商户信息)信息 -->
+    <delete id="delete_merchant" parameterType="java.lang.String">
+		DELETE FROM merchant WHERE ID=#{id}
+    </delete>
+    
+</mapper>

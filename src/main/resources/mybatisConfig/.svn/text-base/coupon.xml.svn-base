@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 城市 xml -->
+<mapper namespace="coupon">
+
+  <resultMap id="coupon" type="_Coupon">
+    <id property="id" column="id"/>
+	<result property="collectCount" column="collect_count"/>
+	<result property="merchantLogo" column="merchant_logo"  jdbcType="BLOB" />
+	<result property="name" column="name"/>
+	<result property="picture" column="picture"  jdbcType="BLOB" />
+	<result property="product" column="product"/>
+	<result property="shareCount" column="share_count"/>
+	<result property="startTime" column="start_time"/>
+	<result property="endTime" column="end_time"/>
+	<result property="operateType" column="operate_type"/>
+	<result property="dealStatus" column="deal_status"/>
+	<result property="target" column="target"/>
+	<result property="branchId" column="branch_id"/>
+	<result property="operatorId" column="operator_id"/>
+	<result property="reviewerId" column="reviewer_id"/>
+	<result property="submitDate" column="submit_date"/>
+	<result property="reviewDate" column="review_date"/>
+	<result property="storeId" column="store_id"/>
+	<result property="runStatus" column="run_status"/>
+	
+  </resultMap>
+  
+  
+   <sql id="resultColumn">
+		 id,collect_count,merchant_logo,name,picture,product,
+		 share_count,start_time,end_time,operate_type,
+		 deal_status,target,branch_id,operator_id,
+		 reviewer_id,submit_date,review_date,store_id,run_status
+	</sql>
+	
+	<update id="update">
+		update llbtmp_coupon set id=#{id}
+			<if test="collectCount != null and collectCount != '' ">, collect_count=#{collectCount,jdbcType=VARCHAR}</if>
+			<!-- <if test="merchantLogo != null and merchantLogo != '' ">, merchant_logo=#{merchantLogo,jdbcType=VARCHAR}</if> -->
+			<if test="name != null and name != '' ">, name=#{name,jdbcType=VARCHAR}</if>
+			<!-- <if test="picture != null and picture != '' ">, picture=#{picture,jdbcType=VARCHAR}</if> -->
+			<if test="product != null and product != '' ">, product=#{product,jdbcType=VARCHAR}</if>
+			<if test="shareCount != null and shareCount != '' ">, share_count=#{shareCount,jdbcType=VARCHAR}</if>
+			<if test="startTime != null and startTime != '' ">, start_time=#{startTime,jdbcType=VARCHAR}</if>
+			<if test="endTime != null and endTime != '' ">, end_time=#{endTime,jdbcType=VARCHAR}</if>
+			<if test="operateType != null and operateType != '' ">, operate_type=#{operateType,jdbcType=VARCHAR}</if>
+			<if test="dealStatus != null and dealStatus != '' ">, deal_status=#{dealStatus,jdbcType=VARCHAR}</if>
+			<if test="target != null and target != '' ">, target=#{target,jdbcType=VARCHAR}</if>
+			<if test="branchId != null and branchId != '' ">, branch_id=#{branchId,jdbcType=NUMERIC}</if>
+			<if test="operatorId != null and operatorId != '' ">, operator_id=#{operatorId,jdbcType=NUMERIC}</if>
+			<if test="reviewerId != null and reviewerId != '' ">, reviewer_id=#{reviewerId,jdbcType=NUMERIC}</if>
+			<if test="submitDate != null and submitDate != '' ">, to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="reviewDate != null and reviewDate != '' ">, to_date(#{reviewDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="storeId != null and storeId != '' ">, store_id=#{storeId,jdbcType=NUMERIC}</if>
+			<if test="runStatus != null and runStatus != '' ">, run_status=#{runStatus,jdbcType=VARCHAR}</if>
+			where id = #{id}
+	
+	</update>
+	
+	<update id="updateDeal">
+		update llbtmp_coupon set id=#{id}
+			<!-- <if test="collectCount != null and collectCount != '' ">, collect_count=#{collectCount,jdbcType=VARCHAR}</if>
+			<if test="merchantLogo != null and merchantLogo != '' ">, merchant_logo=#{merchantLogo,jdbcType=VARCHAR}</if>
+			<if test="name != null and name != '' ">, name=#{name,jdbcType=VARCHAR}</if>
+			<if test="picture != null and picture != '' ">, picture=#{picture,jdbcType=VARCHAR}</if>
+			<if test="product != null and product != '' ">, product=#{product,jdbcType=VARCHAR}</if>
+			<if test="shareCount != null and shareCount != '' ">, share_count=#{shareCount,jdbcType=VARCHAR}</if>
+			<if test="startTime != null and startTime != '' ">, start_time=#{startTime,jdbcType=VARCHAR}</if>
+			<if test="endTime != null and endTime != '' ">, end_time=#{endTime,jdbcType=VARCHAR}</if> -->
+			<if test="operateType != null and operateType != '' ">, operate_type=#{operateType,jdbcType=VARCHAR}</if>
+			<if test="dealStatus != null and dealStatus != '' ">, deal_status=#{dealStatus,jdbcType=VARCHAR}</if>
+			<!-- <if test="target != null and target != '' ">, target=#{target,jdbcType=VARCHAR}</if>
+			<if test="branchId != null and branchId != '' ">, branch_id=#{branchId,jdbcType=NUMERIC}</if>
+			<if test="operatorId != null and operatorId != '' ">, operator_id=#{operatorId,jdbcType=NUMERIC}</if>
+			<if test="reviewerId != null and reviewerId != '' ">, reviewer_id=#{reviewerId,jdbcType=NUMERIC}</if>
+			<if test="submitDate != null and submitDate != '' ">, to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="reviewDate != null and reviewDate != '' ">, to_date(#{reviewDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+			<if test="storeId != null and storeId != '' ">, store_id=#{storeId,jdbcType=NUMERIC}</if>
+			<if test="runStatus != null and runStatus != '' ">, run_status=#{runStatus,jdbcType=VARCHAR}</if> -->
+			where id = #{id}
+	
+	</update>
+	
+	<select id="ConditionTwo" parameterType="java.util.HashMap" resultMap="coupon">
+			select * from llbtmp_coupon where name = #{name} and deal_status = #{deal} and run_status is null
+	
+	</select>
+	
+	<select id="Condition" parameterType="string" resultMap="coupon">
+			select * from llbtmp_coupon where deal_status = #{deal} and run_status is null
+	
+	</select>
+	
+	<insert id="insertNewCoupon" parameterType="java.util.HashMap">
+		INSERT INTO llbtmp_coupon (
+		<include refid="resultColumn" />
+		)
+		select 
+		#{newId},
+		collect_count,
+		merchant_logo,
+		name,
+		picture,
+		product,
+		share_count,
+		start_time,
+		end_time,
+		operate_type,
+		deal_status,
+		#{oldId},
+		branch_id,
+		operator_id,
+		reviewer_id,
+		submit_date,
+		review_date,
+		store_id,
+		#{run} from llbtmp_coupon where id = #{oldId}
+		
+	</insert>
+	
+	
+	<!-- empty_blob() -->
+	<insert id="insert">
+		INSERT INTO llbtmp_coupon (
+		<include refid="resultColumn" />
+		)
+		values (
+		#{id},
+		#{collectCount,jdbcType=VARCHAR},
+		empty_blob(),
+		#{name,jdbcType=VARCHAR},
+		empty_blob(),
+		#{product,jdbcType=VARCHAR},
+		#{shareCount,jdbcType=VARCHAR},
+		to_date(#{startTime,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),
+		to_date(#{endTime,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),
+		#{operateType,jdbcType=VARCHAR},
+		#{dealStatus,jdbcType=VARCHAR},
+		#{target,jdbcType=VARCHAR},
+		#{branchId,jdbcType=NUMERIC},
+		#{operatorId,jdbcType=NUMERIC},
+		#{reviewerId,jdbcType=NUMERIC},
+		to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),
+		to_date(#{reviewDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),
+		#{storeId,jdbcType=NUMERIC},
+		#{runStatus,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<select id="selectById" resultMap="coupon" parameterType="long">
+			select * from llbtmp_coupon where id = #{id}	
+	</select>
+	
+	<select id="selectReviewList" resultMap="coupon">
+			select * from llbtmp_coupon a where a.deal_status = 0 and a.run_status is null
+	</select>
+	
+	<select id="runList" resultMap="coupon">
+			select * from llbtmp_coupon a where  a.run_status = 'R' order by id desc
+	</select>
+	
+	<delete id="delete" parameterType="java.util.HashMap">
+		 delete from llbtmp_coupon where id in( #{old}, (select id from llbtmp_coupon a where a.target = #{old}) )
+	</delete>
+	
+	<delete id="deleteById" parameterType="long">
+		 delete from llbtmp_coupon where id = #{id}
+	</delete>
+	
+	
+</mapper>
