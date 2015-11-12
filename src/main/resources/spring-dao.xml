@@ -11,7 +11,7 @@
 	<context:component-scan base-package="com.ldp.*.dao" />
 	
 	<bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
-        <property name="location" value="classpath:connection.properties" />  
+        <property name="location" value="classpath:config.properties" />  
     </bean>  
     <!--  
 	<context:property-placeholder location="classpath:connection.properties"  ignore-unresolvable="true" />
