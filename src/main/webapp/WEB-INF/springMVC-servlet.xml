@@ -35,23 +35,6 @@
 		<prop key="com.commom.exception.EbhRuntimeException">error/error</prop> </props> 
 		</property> </bean> -->
 
-	<mvc:interceptors>
-		<mvc:interceptor>
-			<mvc:mapping path="/**" />
-			<bean class="com.ldp.common.interceptor.UserInterceptor">
-				<property name="uncheckUrls">
-					<list>
-						<value>/datahub_user/users/auth</value>
-						<value>/datahub_user/user/regist.html</value>
-						<value>/datahub_user/user/checkLogin.html</value>
-						<value>/datahub_user/user/addAdmin.html</value>
-					</list>
-				</property>
-				<!-- 第二中注入bean属性的方法 <bean class="com.common.login.LoginInterceptor"> 
-					<property name="uncheckUrls" value="/merchant"> </property> </bean> -->
-			</bean>
-		</mvc:interceptor>
-	</mvc:interceptors>
 
 	<!-- 处理json数据转换 <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"> 
 		<property name="messageConverters"> <util:list id="beanList"> <ref bean="mappingJacksonHttpMessageConverter" 

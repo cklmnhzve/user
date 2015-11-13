@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.entity.User;
 import com.ldp.datahub.service.UserService;
+import com.ldp.datahub.vo.UserVo;
 
 @Service
 public class UserServiceImpl implements UserService
@@ -14,9 +15,15 @@ public class UserServiceImpl implements UserService
 	private UserDao userDao;
 	
 	
-	public User getUser(String userName) 
+	public UserVo getUser(String userName) 
 	{
-		return userDao.getUser(userName);
+		User user=  userDao.getUser(userName);
+		UserVo vo = new UserVo();
+		vo.setNickName(user.getNickName());
+		vo.setComment(user.getSummary());
+		vo.setUserName(user.getUserName());
+		vo.setUserType(user.getUserType());
+		return vo;
 	}
 
 

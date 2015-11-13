@@ -27,8 +27,6 @@
 	<properties>
 		<!-- 主要依赖库的版本定义 -->
 		<spring.version>3.2.8.RELEASE</spring.version>
-		<jackson.version>2.1.5</jackson.version>
-		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
 		<commons-io.version>2.2</commons-io.version>
@@ -39,10 +37,10 @@
 		<selenium.version>2.33.0</selenium.version>
 		<jetty.version>7.6.11.v20130520</jetty.version>
 		<dozer.version>5.4.0</dozer.version>
+		<json-lib.version>2.4</json-lib.version>
 
 		<!-- Plugin的属性定义 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.7</jdk.version>
 	</properties>
 
 	<!-- 依赖项定义 -->
@@ -133,83 +131,32 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- JSON begin -->
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jaxb-annotations</artifactId>
-			<version>${jackson.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
-			<version>1.2.7</version>
-		</dependency>
-		<!-- JSON end -->
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${json-lib.version}</version>
+            <classifier>jdk15</classifier>
+       </dependency>
 
-		<!-- 需排除slf4j-log4j12，否则会报错 -->
-		<dependency>
-			<groupId>net.sf.dozer</groupId>
-			<artifactId>dozer</artifactId>
-			<version>${dozer.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.47</version>
-		</dependency>
-
-		<!-- LOGGING begin -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>${logback.version}</version>
-		</dependency>
-		<!-- 代码直接调用log4j会被桥接到slf4j -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>log4j-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<!-- 代码直接调用common-logging会被桥接到slf4j -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<!-- 代码直接调用java.util.logging会被桥接到slf4j -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jul-to-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bgee.log4jdbc-log4j2</groupId>
-			<artifactId>log4jdbc-log4j2-jdbc3</artifactId>
-			<version>1.16</version>
-		</dependency>
-		<!-- LOGGING end -->
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.6.6</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.6</version>
+            <scope>runtime</scope>
+        </dependency>
 
 		<!-- POI组件（Office支持组件） start -->
 		<!-- POI，支持.xls、.doc、.ppt等这类较老格式的Office文件 -->

@@ -1,6 +1,7 @@
 package com.ldp.datahub.service;
 
 import com.ldp.datahub.entity.User;
+import com.ldp.datahub.vo.UserVo;
 
 public interface UserService
 {
@@ -9,7 +10,7 @@ public interface UserService
 	 * @param user
 	 * @return
 	 */
-	public User getUser(String userName);
+	public UserVo getUser(String userName);
 	
 	/**
 	 * 根据用户名修改用户
