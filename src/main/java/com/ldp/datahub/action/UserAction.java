@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ldp.datahub.dict.Constant;
 import com.ldp.datahub.service.UserService;
 import com.ldp.datahub.util.CodecUtil;
 import com.ldp.datahub.vo.UserVo;
@@ -32,7 +33,7 @@ import net.sf.json.JSONObject;
 @Controller
 public class UserAction extends BaseAction
 {
-	private static Logger log = Logger.getLogger(UserAction.class);
+//	private static Logger log = Logger.getLogger(UserAction.class);
 
 	@Autowired
 	private UserService userService;
@@ -78,21 +79,17 @@ public class UserAction extends BaseAction
 		
 		UserVo user = userService.getUser(name);
 		
-		log.info(me+" select user info:"+username);
-		
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		if(user!=null){
+			jsonMap.put("code", 0);
+			jsonMap.put("msg", "ok");
+			jsonMap.put("data", user);
+		}else{
+			jsonMap.put("code", 1);
+			jsonMap.put("msg", Constant.no_user);
+//			jsonMap.put("data", user);
+		}
 		
-		jsonMap.put("code", 0);
-		jsonMap.put("msg", "ok");
-		jsonMap.put("data", user);
-//		if(username.equals(me)){
-//			//FIXME 添加quta信息
-//			Quota quota = new Quota();
-//			quota.setTagQuta(100);
-//			quota.setItemQuta(10);
-//			quota.setRepoQuta(2);
-//			jsonMap.put("quta", quota);
-//		}
 		String json = JSONObject.fromObject(jsonMap).toString();
 		sendJson(response, json);
 	}
