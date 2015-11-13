@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -87,6 +86,9 @@ public class UserAction extends BaseAction
 		}else{
 			jsonMap.put("code", 1);
 			jsonMap.put("msg", Constant.no_user);
+			if(username.equals(me)){
+				
+			}
 //			jsonMap.put("data", user);
 		}
 		
