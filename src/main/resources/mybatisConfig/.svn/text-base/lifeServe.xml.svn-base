@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- llbtmp_lifeserve:广告表 -->
+<mapper namespace="ls">
+  <resultMap id="lsMap" type="_ls">
+    <id property="id" column="id" />
+    <result property="position" column="ls_pos"/>
+    <result property="moduleName" column="module_name"/>
+    <result property="product" column="PRODUCT"/>
+    <result property="appAdr" column="app_adr"/>
+    <result property="appName" column="app_name"/>
+    <result property="remark" column="REMARK"/>
+    <result property="icon" column="icon"/>
+    <result property="branch" column="branch_id"/>
+    <result property="target" column="TARGET"/>
+    <result property="dealStatus" column="deal_status"/>
+    <result property="operateType" column="operate_type"/>
+    <result property="operator" column="operate_id"/>
+    <result property="reviewer" column="reviewer_id"/>
+    <result property="submitDate" column="submit_date"/>
+    <result property="reviewDate" column="review_date"/>
+  </resultMap>
+  <resultMap type="java.util.HashMap" id="lsExtendMap" extends="lsMap"></resultMap>
+  	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="moduleName != null">  and (M.MODULE_NAME = #{moduleName} ) </if>
+        <if test="appName != null">  and (M.APP_NAME = #{appName} ) </if>
+	</sql>
+    <sql id="querySqlDim">
+        <if test="moduleName != null and moduleName != '' ">  and (M.MODULE_NAME like '%'||#{moduleName}||'%' ) </if>
+        <if test="appName != null and appName != '' ">  and (M.APP_NAME like '%'||#{APP_NAME}||'%' ) </if>
+	</sql>
+  
+	<insert id="addLs" parameterType="_ls">
+	  insert into llbtmp_lifeserve(id,LS_POS,MODULE_NAME,PRODUCT,APP_ADR,APP_NAME,REMARK,icon,BRANCH_ID,OPERATE_TYPE,DEAL_STATUS,OPERATOR_ID,SUBMIT_DATE) values
+	  (#{id},#{position},#{moduleName},#{product},#{appAdr},#{appName},#{remark},#{icon},#{branch},#{operateType},#{dealStatus},#{operator},to_date(#{submitDate},'yyyy-mm-dd hh24:mi:ss'))
+	</insert>
+	
+	<select id="getLsById" parameterType="String" resultMap="lsMap">
+	  select a.id,b.position ls_pos,module_name,PRODUCT,app_adr,app_name,REMARK,a.operate_type from llbtmp_lifeserve a,llbtmp_ls_position b where a.ls_pos=b.id and a.id = #{id}
+	</select>
+	
+	<select id="select_ls_withPage" resultMap="lsExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+		select m.id id,
+			   module_name,
+		       app_name,
+		       b.name operatorname,
+		       m.submit_date,
+		       c.name reviewername,
+		       m.review_date,
+		       m.operate_type
+		  from llbtmp_lifeserve m, llbtmp_admin b,llbtmp_admin c
+		 where m.operator_id = b.id
+		 	   and m.deal_status!=0
+		       and m.reviewer_id=c.id(+)
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	
+	<!-- 根据条件查询满足条件的(商户信息)记录数  -->
+	<select id="select_ls_count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from llbtmp_lifeserve m
+		 where m.deal_status!=0
+		<include refid="querySqlDim"/>
+	</select>
+	<select id="select_ls_withPage_0" resultMap="lsExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+	       select m.id id,
+			   module_name,
+		       app_name,
+		       b.name operatorname,
+		       m.submit_date,
+		       c.name reviewername,
+		       m.review_date,
+		       m.operate_type
+		  from llbtmp_lifeserve m, llbtmp_admin b,llbtmp_admin c
+		 where m.operator_id = b.id
+		       and m.reviewer_id=c.id(+)
+	           and m.deal_status=0
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	<!-- 根据条件查询满足条件的(商户信息)记录数  -->
+	<select id="select_ls_count_0" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from llbtmp_lifeserve m
+		 where m.deal_status=0
+		<include refid="querySqlDim"/>
+	</select>
+	
+	<update id="updateLs" parameterType="_ls">
+     update llbtmp_lifeserve set OPERATE_TYPE=#{operateType},deal_status=#{dealStatus},reviewer_id=#{reviewer},review_date=to_date(#{reviewDate},'yyyy-mm-dd hh24:mi:ss')
+     where id = #{id} 
+   </update>
+	
+  <delete id="deleteLs" parameterType="long">
+     delete from llbtmp_lifeserve where id = #{id}
+   </delete>
+	
+   <select id="queryTheLs" parameterType="_ls" resultMap="lsMap">
+	  select * from llbtmp_lifeserve m where branch_id=#{branch} 
+	   <if test="product != null">  and (M.product = #{product} ) </if>
+	   <if test="position != null">  and (M.ls_pos = #{position} ) </if>
+	</select>
+</mapper>

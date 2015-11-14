@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 热门关键词应用 -->
+<mapper namespace="hotkeyword">
+
+  <resultMap id="gethotkeyword" type="_HotKeyword">
+    <id property="id" column="id"/>
+	<result property="dealStatus" column="deal_status"/>
+	<result property="keyword" column="keyword"/>
+	<result property="operateType" column="operate_type"/>
+	<result property="target" column="target"/>
+	<result property="app1" column="app1"/>
+	<result property="app2" column="app2"/>
+	<result property="app3" column="app3"/>
+	<result property="branchId" column="branch_id"/>
+	<result property="channelId" column="channel_id"/>
+	<result property="operatorId" column="operator_id"/>
+	<result property="reviewerId" column="reviewer_id"/>
+	<result property="submitDate" column="submit_date"/>
+	<result property="reviewDate" column="review_date"/>
+  </resultMap>
+  
+  <sql id="resultColumn">
+		 id,deal_status,keyword,operate_type,target,app1,app2,app3,branch_id,channel_id,
+		 operator_id,reviewer_id,submit_date,review_date
+	</sql>
+	
+	<update id="updateDeal">
+		 update llbtmp_hot_keyword set id=#{id}
+		 <if test="dealStatus != null and dealStatus != '' ">, deal_status=#{dealStatus,jdbcType=VARCHAR}</if>
+		 <if test="keyword != null and keyword != ''"> ,keyword=#{keyword,jdbcType=VARCHAR}</if>
+         <if test="operateType != null and operateType != '' "> ,operate_type=#{operateType,jdbcType=VARCHAR}</if>
+		<if test="target != null and target != '' "> ,target=#{target,jdbcType=VARCHAR}</if>
+		 <if test="app1 != null and app1 != '' "> ,app1=#{app1,jdbcType=VARCHAR}</if> 
+		 <if test="app2 != null and app2 != '' "> ,app2=#{app2,jdbcType=VARCHAR}</if> 
+		  <if test="app3 != null and app3 != '' "> ,app3=#{app3,jdbcType=VARCHAR}</if>
+		<if test="branchId != null and branchId != '' "> ,branch_id=#{branchId,jdbcType=NUMERIC}</if>
+		<if test="channelId != null and channelId != '' "> ,channel_id=#{channelId,jdbcType=NUMERIC}</if>
+		<if test="operatorId != null and operatorId != '' "> ,operator_id=#{operatorId,jdbcType=NUMERIC}</if>
+		<if test="reviewerId != null and reviewerId != '' "> ,reviewer_id=#{reviewerId,jdbcType=NUMERIC}</if> 
+		<if test="submitDate != null and submitDate != '' "> ,submit_date=to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+		<if test="reviewDate != null and reviewDate != '' "> ,review_date=to_date(#{reviewDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')</if>
+		where id = #{id}
+	</update>
+	
+	<insert id="insert">
+		INSERT INTO llbtmp_hot_keyword (
+		<include refid="resultColumn" />
+		)
+		values (
+		#{id},
+		#{dealStatus,jdbcType=VARCHAR},
+		#{keyword,jdbcType=VARCHAR},
+		#{operateType,jdbcType=VARCHAR},
+		#{target,jdbcType=VARCHAR},
+		#{app1,jdbcType=VARCHAR},
+		#{app2,jdbcType=VARCHAR},
+		#{app3,jdbcType=VARCHAR},
+		#{branchId,jdbcType=NUMERIC},
+		#{channelId,jdbcType=NUMERIC},
+		#{operatorId,jdbcType=NUMERIC},
+		#{reviewerId,jdbcType=NUMERIC},
+		to_date(#{submitDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss'),
+		to_date(#{reviewDate,jdbcType=DATE},'yyyy-mm-dd hh24:mi:ss')																																
+		)	
+	</insert>	
+	 
+	 <select id="getDeal" resultMap="gethotkeyword">
+	 	select a.id,
+       a.deal_status,
+       a.keyword,
+       a.operate_type,
+       a.target,
+       a.branch_id,
+       a.channel_id,
+       a.operator_id,
+       a.reviewer_id,
+       a.submit_date,
+       a.review_date,
+       b.name         app1,
+       c.name         app2,
+       d.name         app3
+  from llbtmp_hot_keyword a, llbtmp_app b, llbtmp_app c, llbtmp_app d
+ where a.app1 = b.id(+)
+   and a.app2 = c.id(+)
+   and a.app3 = d.id(+)
+   and a.deal_status = 0
+	 </select>
+	 
+	 <delete id="delete">
+	 	delete from llbtmp_hot_keyword where id = #{id}
+	 </delete>
+	 
+	 <select id="getHotById" parameterType="long" resultMap="gethotkeyword">
+	 	select * from llbtmp_hot_keyword where id = #{id}
+	 </select>
+	 
+	 <select id="getRun" resultMap="gethotkeyword">
+	 	select a.id,
+       a.deal_status,
+       a.keyword,
+       a.operate_type,
+       a.target,
+       a.branch_id,
+       a.channel_id,
+       a.operator_id,
+       a.reviewer_id,
+       a.submit_date,
+       a.review_date,
+       b.name         app1,
+       c.name         app2,
+       d.name         app3
+  from llbtmp_hot_keyword a, llbtmp_app b, llbtmp_app c, llbtmp_app d
+ where a.app1 = b.id(+)
+   and a.app2 = c.id(+)
+   and a.app3 = d.id(+)
+   and a.deal_status = 1
+	 </select>
+	 
+</mapper>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- tblNameCN:工号信息 llbtmp_admin -->
+<mapper namespace="admin">
+	<resultMap type="java.util.HashMap" id="adminBaseMap">
+        <result column="id" javaType="java.lang.Long" property="id"/>  <!-- id -->
+        <result column="account" javaType="java.lang.String" property="account"/>  <!-- 工号 -->
+        <result column="password" javaType="java.lang.String" property="password"/>  <!-- 密码-->
+        <result column="name" javaType="java.lang.String" property="name"/>  <!-- 姓名 -->
+        <result column="BRANCH_ID" javaType="java.lang.String" property="branch"/>  <!-- 机构编码 -->
+        <result column="gender" javaType="java.lang.String" property="gender"/>  <!-- 性别 -->
+        <result column="CRED_TYPE" javaType="java.lang.String" property="credType"/>  <!-- 证书类型 -->
+        <result column="CRED_NUM" javaType="java.lang.String" property="credNum" />  <!-- 证件号 -->
+        <result column="phone" javaType="java.lang.String" property="phone" />  <!-- 联系方式 -->
+        <result column="cellphone" javaType="java.lang.String" property="cellphone" />  <!-- 移动手机 -->
+        <result column="NOTESEMAIL" javaType="java.lang.String" property="notesEmail" />  <!-- notes邮箱 -->
+        <result column="email" javaType="java.lang.String" property="email" />  <!-- 邮箱 -->
+        <result column="explain" javaType="java.lang.String" property="explain" />  <!-- 解释 -->
+        <result column="OPERATE_TYPE" javaType="java.lang.String" property="operateType" />  <!-- 操作类型 -->
+        <result column="DEAL_STATUS" javaType="java.lang.String" property="dealStatus" />  <!-- 处理状态 -->
+	</resultMap>
+	<resultMap type="java.util.HashMap" id="adminExtendMap" extends="adminBaseMap">
+	</resultMap>
+	<!-- 公共sql提取  -->
+	<sql id="querySql">
+        <if test="id != null">  and (M.ID = #{id} ) </if>
+        <if test="account != null">  and (M.account = #{account} ) </if>
+        <if test="password != null">  and (M.password = #{password} ) </if>
+        <if test="name != null">  and (M.NAME = #{name} ) </if>
+        <if test="notesEmail != null">  and (M.NOTESEMAIL = #{notesEmail} ) </if>
+        <if test="phone != null">  and (M.PHONE = #{phone} ) </if>
+        <if test="email != null">  and (M.EMAIL = #{email} ) </if>
+        <if test="operateType != null">  and (M.OPERATE_TYPE = #{operateType} ) </if>
+        <if test="dealStatus != null">  and (M.DEAL_STATUS = #{dealStatus} ) </if>
+	</sql>
+	<sql id="querySqlDim">
+        <if test="id != null and id != '' ">  and (M.ID like '%'||#{id}||'%' ) </if>
+        <if test="password != null">  and (M.password = #{password} ) </if>
+        <if test="account != null and account != '' ">  and (M.account like '%'||#{account}||'%' ) </if>
+        <if test="name != null and name != '' ">  and (M.NAME like '%'||#{name}||'%' ) </if>
+        <if test="notesEmail != null and notesEmail != '' ">  and (M.NOTESEMAIL like '%'||#{notesEmail}||'%' ) </if>
+        <if test="phone != null and phone != '' ">  and (M.PHONE like '%'||#{phone}||'%' ) </if>
+        <if test="email != null and email != '' ">  and (M.EMAIL like '%'||#{email}||'%' ) </if>
+        <if test="operateType != null and operateType != '' ">  and (M.OPERATE_TYPE like '%'||#{operateType}||'%' ) </if>
+        <if test="dealStatus != null and dealStatus != '' ">  and (M.DEAL_STATUS like '%'||#{dealStatus}||'%' ) </if>
+	</sql>
+	<select id="select_admin_withPage" resultMap="adminExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+        SELECT M.ID,M.account,M.NAME,N.BRANCH_NAME BRANCH_ID,decode(GENDER,'M','男','F','女') GENDER,decode(CRED_TYPE,'A','身份证','B','军人身份证'，'C','护照','D','其他证件') CRED_TYPE,M.CRED_NUM,M.PHONE,M.CELLPHONE,M.NOTESEMAIL,M.EMAIL,
+     decode(M.OPERATE_TYPE,'A','新增','U','修改','D','删除') OPERATE_TYPE,decode(M.DEAL_STATUS,'0'
+		,'待审核','1','审核通过','2','审核不通过' )DEAL_STATUS
+     from llbtmp_admin m,llbtmp_branch n
+	 where m.deal_status!=0 and m.branch_id=n.id
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	
+	<!-- 根据条件查询满足条件的(商户信息)记录数  -->
+	<select id="select_admin_count" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from llbtmp_admin m
+		 where m.deal_status!=0
+		<include refid="querySqlDim"/>
+	</select>
+	<select id="select_admin_withPage_0" resultMap="adminExtendMap" parameterType="java.util.Map">
+	SELECT * FROM (SELECT MYROW.*, ROWNUM RN 
+	FROM (
+        SELECT M.ID,M.account,M.NAME,N.BRANCH_NAME BRANCH_ID,decode(GENDER,'M','男','F','女') GENDER,decode(CRED_TYPE,'A','身份证','B','军人身份证'，'C','护照','D','其他证件') CRED_TYPE,M.CRED_NUM,M.PHONE,M.CELLPHONE,M.NOTESEMAIL,M.EMAIL,
+     decode(M.OPERATE_TYPE,'A','新增','U','修改','D','删除') OPERATE_TYPE,decode(M.DEAL_STATUS,'0'
+		,'待审核','1','审核通过','2','审核不通过' )DEAL_STATUS
+     from llbtmp_admin m,llbtmp_branch n
+	 where m.deal_status=0 and m.branch_id=n.id
+	  <include refid="querySqlDim"/>
+	     ) MYROW  <![CDATA[
+		WHERE ROWNUM <= #{_end}
+		) 
+		WHERE RN >= #{_begin}]]>
+		ORDER BY ID DESC
+	</select>
+	<!-- 根据条件查询满足条件的(商户信息)记录数  -->
+	<select id="select_admin_count_0" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		 SELECT COUNT(*)
+		 from llbtmp_admin m
+		 where m.deal_status=0
+		<include refid="querySqlDim"/>
+	</select>
+	
+	<!-- 用户登录查询 -->
+	<select id="login" parameterType="java.util.HashMap" resultMap="adminBaseMap">
+		select * from llbtmp_admin M where flag=1
+		<include refid="querySql"/>
+	</select>
+	
+</mapper>

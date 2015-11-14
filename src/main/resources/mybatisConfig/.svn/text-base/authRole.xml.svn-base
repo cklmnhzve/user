@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- tblNameCN:角色表 -->
+<mapper namespace="authRole">
+    <resultMap type="java.util.HashMap" id="managerFunctionBaseMap">
+        <result column="FUNC_ID" javaType="java.lang.String" property="funcId"/>  <!-- 功能编号 -->
+        <result column="FUNC_NAME" javaType="java.lang.String" property="funcName"/>  <!-- 功能名称 -->
+        <result column="FUNC_DESC" javaType="java.lang.String" property="funcDesc"/>  <!-- 功能描述 -->
+        <result column="FUNC_ACTION" javaType="java.lang.String" property="funcAction"/>  <!-- 功能入口 -->
+        <result column="FUNC_PARAM" javaType="java.lang.String" property="funcParam"/>  <!-- 参数信息  -->
+        <result column="FUNC_PARENT_ID" javaType="java.lang.String" property="funcParentId"/>  <!-- 所属父ID -->
+        <result column="STATUS" javaType="java.lang.String" property="status"/>  <!-- 功能状态 -->
+        <result column="MENUFLAG" javaType="java.lang.String" property="menuflag"/>  <!-- 是否为菜单：0 -->
+        <result column="CREATE_TIME" javaType="java.lang.String" property="createTime"/>  <!-- 记录创建时间 -->
+        <result column="LAST_UPDATE_TIME" javaType="java.lang.String" property="lastUpdateTime"/>  <!-- 最后更新时间 -->
+	</resultMap>
+	 <!-- 批量新增角色功能关系信息-->
+	<insert id="insert_managerRoleFuncBatch" parameterType="java.util.Map">
+		INSERT INTO FOC_MANAGER_ROLE_FUNC (ROLE_ID,FUNC_ID)
+		<foreach collection="roleFuncList" item="item" index="index"
+			separator="union all">
+			SELECT
+			#{item.roleId,jdbcType=VARCHAR},#{item.funcId,jdbcType=VARCHAR}
+			FROM DUAL
+		</foreach>
+	</insert>
+	 <!-- 根据角色Id查询对应的功能 -->
+	<select id="select_FuncInfo_ByRoleId" parameterType="java.util.HashMap" resultMap="managerFunctionBaseMap">
+	    <![CDATA[
+     SELECT MF.FUNC_ID,MF.FUNC_NAME,MF.FUNC_DESC,MF.FUNC_ACTION,MF.FUNC_PARAM,MF.FUNC_PARENT_ID,MF.STATUS,MF.MENUFLAG,to_char(MF.CREATE_TIME,'yyyy-mm-dd hh24:mi:ss') as CREATE_TIME,to_char(MF.LAST_UPDATE_TIME,'yyyy-mm-dd hh24:mi:ss') as LAST_UPDATE_TIME
+			FROM FOC_MANAGER_FUNCTION MF,FOC_MANAGER_ROLE_FUNC MRF,FOC_ADMIN_ROLE AR
+	    WHERE 1=1
+	    AND MF.FUNC_ID=MRF.FUNC_ID
+	    AND MRF.ROLE_ID=AR.ROLE_ID
+	    AND AR.ROLE_ID=#{roleId}
+	    AND MF.STATUS = #{status}
+			ORDER BY MF.FUNC_ID DESC
+			]]>
+	</select>
+	<!-- 删除某个角色下部分功能关系 -->
+	<delete id="delete_roleFuncBatch" parameterType="java.util.HashMap">
+			DELETE FROM FOC_MANAGER_ROLE_FUNC MRF
+			WHERE 1= 1 
+			AND MRF.ROLE_ID=#{roleId}
+			AND MRF.FUNC_ID IN
+			<foreach item="idItem" collection="delFuncIds" open="(" separator="," close=")">
+			#{idItem}
+			</foreach>
+	</delete>
+	<!-- 根据角色Id删除角色功能关系信息 -->
+	<delete id="delete_RoleFuncByRoleId" parameterType="java.lang.String">
+			DELETE FROM FOC_MANAGER_ROLE_FUNC MRF
+			WHERE 1= 1 
+			AND MRF.ROLE_ID=#{_parameter}
+	</delete>
+</mapper>
