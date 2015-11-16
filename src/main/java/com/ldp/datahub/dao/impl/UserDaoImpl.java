@@ -1,19 +1,26 @@
 package com.ldp.datahub.dao.impl;
 
 
+import javax.activation.DataSource;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.ldp.datahub.dao.BaseJdbcDao;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.entity.User;
 
 @Repository
-public class UserDaoImpl implements UserDao
+public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
-	@Autowired
-	protected SqlSessionTemplate session;
+//	@Autowired
+//	protected SqlSessionTemplate session;
+//	@Autowired
+//	protected DataSource dataSource;
 
+	
 
 	public int userLogng(User user)
 	{
@@ -21,13 +28,18 @@ public class UserDaoImpl implements UserDao
 	}
 
 	@Override
-	public User getUser(String userName) 
+	public User getUser(String loginName) 
 	{
-		 User user = new User();
-		 user.setLoginName(userName);
-		 
-		 user = session.selectOne("user.searchUser", user);
-		 return user;
+//		 User user = new User();
+//		 user.setLoginName(userName);
+//		 session.getConfiguration().getEnvironment().getDataSource();
+//		 
+//		 user = session.selectOne("user.searchUser", user);
+//		 return user;
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=?");
+		return(User) getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
 		
 	}
 
@@ -37,8 +49,8 @@ public class UserDaoImpl implements UserDao
 	@Override
 	public int updateUser(User user)
 	{
-		int t = session.update("user.updateUser", user);
-		return t;
+//		int t = session.update("user.updateUser", user);
+		return 0;
 	}
 
 	/**

@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,9 +32,11 @@ import net.sf.json.JSONObject;
  */
 
 @Controller
+@RequestMapping("/users")
 public class UserAction extends BaseAction
 {
 //	private static Logger log = Logger.getLogger(UserAction.class);
+	private static Log log = LogFactory.getLog(UserAction.class);
 
 	@Autowired
 	private UserService userService;
@@ -46,39 +50,25 @@ public class UserAction extends BaseAction
 		return null;
 	}
 
-	/**
-	 * 用户登录
-	 * 
-	 * @throws SQLException
-	 */
-	// @RequestMapping(value = "/users/auth", method = RequestMethod.GET)
-//	@ResponseBody
-//	public void userLogin() throws SQLException
-//	{
-//
-//		System.out.println("进入用户登录 ! ");
-//		User user = new User();
-//		User uu = userService.getOneUser(user);
-//
-//		System.out.println(uu);
-//
-//	}
 
 	/**
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/users/{username}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{loginname}", method = RequestMethod.GET)
 	@ResponseBody
-	public void getUser(@PathVariable String username,HttpServletRequest request,HttpServletResponse response) throws IOException
+	public  void getUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
-		String name = CodecUtil.basic64Decode(username);
+		String name = CodecUtil.basic64Decode(loginname);
 //		String name = username;
 		String me = request.getHeader("user");
 		
 		UserVo user = userService.getUser(name);
 		
+		log.info(me+" getUser:"+name);
+		
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		
 		if(user!=null){
 			jsonMap.put("code", 0);
 			jsonMap.put("msg", "ok");
@@ -86,10 +76,9 @@ public class UserAction extends BaseAction
 		}else{
 			jsonMap.put("code", 1);
 			jsonMap.put("msg", Constant.no_user);
-			if(username.equals(me)){
+			if(loginname.equals(me)){
 				
 			}
-//			jsonMap.put("data", user);
 		}
 		
 		String json = JSONObject.fromObject(jsonMap).toString();
@@ -99,11 +88,17 @@ public class UserAction extends BaseAction
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "/users/:username", method = RequestMethod.POST)
+	@RequestMapping(value = "/{loginname}", method = RequestMethod.POST)
 	@ResponseBody
-	public void addtUser()
+	public JSONObject addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
 	{
-		System.out.println("hello ldp user ! ");
+		
+		String name = CodecUtil.basic64Decode(loginname);
+		String pwd = request.getParameter("passwd");
+		JSONObject result =  new JSONObject();
+//		System.out.println("hello ldp user ! ");
+//		log.info("add user:"+);
+		return result;
 	}
 
 	/**
@@ -114,6 +109,10 @@ public class UserAction extends BaseAction
 	@ResponseBody
 	public void updateUser(@PathVariable String username,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
+		String name = CodecUtil.basic64Decode(username);
+		log.info("update user:"+name);
+		request.getParameter("");
+		
 //		System.out.println("进入修改用户方法！   ");
 //		
 //		System.out.println("username:  " + username);
