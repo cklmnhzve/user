@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ldp.datahub.dict.Constant;
+import com.ldp.datahub.common.Constant;
+import com.ldp.datahub.common.util.CodecUtil;
 import com.ldp.datahub.service.UserService;
-import com.ldp.datahub.util.CodecUtil;
 import com.ldp.datahub.vo.UserVo;
 
 import net.sf.json.JSONObject;
@@ -59,30 +60,35 @@ public class UserAction extends BaseAction
 	@ResponseBody
 	public  void getUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
-		String name = CodecUtil.basic64Decode(loginname);
-//		String name = username;
-		String me = request.getHeader("user");
-		
-		UserVo user = userService.getUser(name);
-		
-		log.info(me+" getUser:"+name);
-		
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		
-		if(user!=null){
-			jsonMap.put("code", 0);
-			jsonMap.put("msg", "ok");
-			jsonMap.put("data", user);
-		}else{
-			jsonMap.put("code", 1);
-			jsonMap.put("msg", Constant.no_user);
-			if(loginname.equals(me)){
+		try {
+			String name = CodecUtil.basic64Decode(loginname);
+			String me = request.getHeader("user");
+			UserVo user = userService.getUser(name);
+			log.info(me+" getUser:"+name);
+			
+			if(user!=null){
+				jsonMap.put(Constant.result_code, 0);
+				jsonMap.put(Constant.result_msg, Constant.sucess);
+				jsonMap.put(Constant.result_data, user);
+				if(loginname.equals(me)){
+					
+				}
+			}else{
+				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_msg, Constant.no_user);
 				
 			}
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}finally{
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
 		}
 		
-		String json = JSONObject.fromObject(jsonMap).toString();
-		sendJson(response, json);
 	}
 
 	/**
@@ -90,15 +96,40 @@ public class UserAction extends BaseAction
 	 */
 	@RequestMapping(value = "/{loginname}", method = RequestMethod.POST)
 	@ResponseBody
-	public JSONObject addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
+	public void addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
 	{
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		
-		String name = CodecUtil.basic64Decode(loginname);
-		String pwd = request.getParameter("passwd");
-		JSONObject result =  new JSONObject();
-//		System.out.println("hello ldp user ! ");
-//		log.info("add user:"+);
-		return result;
+		try {
+			String name = CodecUtil.basic64Decode(loginname);
+			String pwd = request.getParameter("passwd");
+			
+			if(StringUtils.isNotEmpty(pwd)){
+				String msg = userService.creatUser(name, pwd);
+				if(StringUtils.isNotEmpty(msg)){
+					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_msg, Constant.exist_user);
+				}else{
+					jsonMap.put(Constant.result_code, Constant.sucess_code);
+					jsonMap.put(Constant.result_msg, Constant.sucess);
+				}
+			}else{
+				log.error("pwd is null");
+				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_msg, Constant.pwd_null);
+			}
+			
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}
+		finally{
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
+		}
+		
 	}
 
 	/**

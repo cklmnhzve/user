@@ -1,10 +1,6 @@
 package com.ldp.datahub.dao.impl;
 
 
-import javax.activation.DataSource;
-
-import org.mybatis.spring.SqlSessionTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +11,6 @@ import com.ldp.datahub.entity.User;
 @Repository
 public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
-//	@Autowired
-//	protected SqlSessionTemplate session;
-//	@Autowired
-//	protected DataSource dataSource;
 
 	
 
@@ -30,19 +22,28 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	@Override
 	public User getUser(String loginName) 
 	{
-//		 User user = new User();
-//		 user.setLoginName(userName);
-//		 session.getConfiguration().getEnvironment().getDataSource();
-//		 
-//		 user = session.selectOne("user.searchUser", user);
-//		 return user;
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=?");
 		return(User) getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
 		
 	}
-
+	
+	@Override
+	public void insertUser(User user) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME) VALUES(?,?,?,?,?,?)");
+		Object[] param = new Object[]{user.getLoginName(),user.getLoginPasswd(),user.getUserStatus(),user.getUserType(),user.getNickName(),user.getOpTime()};
+		getJdbcTemplate().update(sql.toString(), param);
+		
+	}
+	
+	public boolean isExist(String loginName){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT LOGIN_NAME FROM DH_USER WHERE LOGIN_NAME=?");
+		return getJdbcTemplate().query(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(String.class)).size()>0;
+	}
+	
 	/**
 	 * 根据用户名修改用户
 	 */
@@ -72,5 +73,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	
 
 }

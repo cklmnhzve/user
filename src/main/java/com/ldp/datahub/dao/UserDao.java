@@ -1,6 +1,5 @@
 package com.ldp.datahub.dao;
 
-import java.sql.SQLException;
 
 import com.ldp.datahub.entity.User;
 
@@ -13,6 +12,14 @@ public interface UserDao
 	 * @return
 	 */
 	public User getUser(String userName);
+	
+	/**
+	 * 新增用户
+	 * @param user
+	 */
+	public void insertUser(User user);
+	
+	public boolean isExist(String loginName);
 	
 	/**
 	 * 根据用户名修改用户

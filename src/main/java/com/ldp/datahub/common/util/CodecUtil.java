@@ -1,6 +1,7 @@
-package com.ldp.datahub.util;
+package com.ldp.datahub.common.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class CodecUtil {
 	
@@ -13,9 +14,13 @@ public class CodecUtil {
 		return new String(Base64.decodeBase64(code));
 	}
 	
+	public static String MD5(String str) {
+		return DigestUtils.md5Hex(str);
+	}
+	
 	public static void main(String[] args) {
 		
-		String loginName="liuxy10@asiainfo.com";
+		String loginName="liuxueying1001@126.com";
 //		String nameEncode = encoder.encode(loginName.getBytes());
 //		System.err.println(nameEncode);
 //		String s = new String(Base64.encodeBase64(loginName))

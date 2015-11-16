@@ -10,7 +10,9 @@ public interface UserService
 	 * @param user
 	 * @return
 	 */
-	public UserVo getUser(String userName);
+	public UserVo getUser(String loginName);
+	
+	public String creatUser(String loginName,String pwd);
 	
 	/**
 	 * 根据用户名修改用户
@@ -22,8 +24,4 @@ public interface UserService
 	 */
 	public int deleteUser(User user);
 	
-	/**
-	 * 用户登录
-	 */
-	public int userLogin(User user);
 }
