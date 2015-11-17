@@ -22,6 +22,9 @@ public class UserServiceImpl implements UserService
 	public UserVo getUser(String loginName) 
 	{
 		User user=  userDao.getUser(loginName);
+		if(user==null){
+			return null;
+		}
 		UserVo vo = new UserVo();
 		vo.setNickName(user.getNickName());
 		vo.setComment(user.getSummary());
@@ -41,7 +44,7 @@ public class UserServiceImpl implements UserService
 		}
 		User user = new User();
 		user.setLoginName(loginName);
-		user.setNickName(loginName.substring(loginName.indexOf("@")));
+		user.setNickName(loginName.substring(0,loginName.indexOf("@")));
 		user.setLoginPasswd(pwd);
 		user.setUserStatus(Constant.userStatus.NO_ACTIVE);
 		user.setUserType(Constant.userType.common);

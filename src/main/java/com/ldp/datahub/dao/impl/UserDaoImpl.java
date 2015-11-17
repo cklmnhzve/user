@@ -1,6 +1,8 @@
 package com.ldp.datahub.dao.impl;
 
 
+import java.util.List;
+
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +27,14 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=?");
-		return(User) getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
+		List<User> users =  getJdbcTemplate().query(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
+		
+		 if(users.isEmpty()){
+			 return null;
+		 }
+		 
+		 return users.get(0);
+//		 return(User) getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
 		
 	}
 	

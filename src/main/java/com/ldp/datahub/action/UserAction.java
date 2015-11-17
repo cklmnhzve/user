@@ -57,7 +57,6 @@ public class UserAction extends BaseAction
 	 * @throws IOException 
 	 */
 	@RequestMapping(value = "/{loginname}", method = RequestMethod.GET)
-//	@ResponseBody
 	public  void getUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -95,7 +94,6 @@ public class UserAction extends BaseAction
 	 * 创建用户
 	 */
 	@RequestMapping(value = "/{loginname}", method = RequestMethod.POST)
-//	@ResponseBody
 	public void addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
