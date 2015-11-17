@@ -74,8 +74,9 @@ public class UserAction extends BaseAction
 					
 				}
 			}else{
+				log.error(name+" 不存在");
 				jsonMap.put(Constant.result_code, Constant.fail_code);
-				jsonMap.put(Constant.result_msg, Constant.no_user);
+				jsonMap.put(Constant.result_msg, name+" "+Constant.no_user);
 				
 			}
 			
