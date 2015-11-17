@@ -63,4 +63,7 @@ VOLUME /usr/local/tomcat/webapps/data
 
 RUN chmod +x ./webapps/start.sh
 
+
+ENV SERVICE_NAME=datahub_user
+
 CMD ["./webapps/start.sh"]
