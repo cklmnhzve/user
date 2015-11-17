@@ -1,2 +1,2 @@
 # datahub_user
-USER服务，提供USER的增加删除改查
+USER服务，提供USER的查看
