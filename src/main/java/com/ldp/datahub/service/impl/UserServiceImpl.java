@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService
 		User user = new User();
 		user.setLoginName(loginName);
 		user.setNickName(loginName.substring(loginName.indexOf("@")));
-		user.setLoginPasswd(CodecUtil.MD5(pwd));
+		user.setLoginPasswd(pwd);
 		user.setUserStatus(Constant.userStatus.NO_ACTIVE);
 		user.setUserType(Constant.userType.common);
 		user.setOpTime(new Timestamp(System.currentTimeMillis()));

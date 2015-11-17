@@ -9,7 +9,7 @@ public class BaseAction {
 
 	 public void sendJson(HttpServletResponse response, String text){
     	 PrintWriter write = null;  
-    	 response.setContentType("text/html;charset=UTF-8");  
+    	 response.setContentType("text/json;charset=UTF-8");  
     	 response.setHeader("Pragma", "No-cache");  
     	 response.setHeader("Cache-Control", "no-cache");  
     	 response.setDateHeader("Expires", 0);  
