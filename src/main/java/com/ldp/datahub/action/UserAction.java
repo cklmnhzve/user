@@ -1,11 +1,16 @@
 package com.ldp.datahub.action;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URLDecoder;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -13,13 +18,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ldp.datahub.common.Constant;
-import com.ldp.datahub.common.util.CodecUtil;
+import com.ldp.datahub.entity.User;
 import com.ldp.datahub.service.UserService;
 import com.ldp.datahub.vo.UserVo;
 
@@ -33,6 +39,7 @@ import net.sf.json.JSONObject;
  */
 
 @Controller
+@RequestMapping(value="/users")
 public class UserAction extends BaseAction
 {
 //	private static Logger log = Logger.getLogger(UserAction.class);
@@ -55,7 +62,7 @@ public class UserAction extends BaseAction
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.GET)
 //	@ResponseBody
 	public  void getUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
@@ -95,17 +102,17 @@ public class UserAction extends BaseAction
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "users/{loginname}", method = RequestMethod.POST)
-	public void addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.POST)
+	public void addUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response)
 	{
-		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		JSONObject requestJson = JSONObject.fromObject(body);
 		
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String name = CodecUtil.basic64Decode(loginname);
 			String pwd = request.getParameter("passwd");
 			
 			if(StringUtils.isNotEmpty(pwd)){
-				String msg = userService.creatUser(name, pwd);
+				String msg = userService.creatUser(loginName, pwd);
 				if(StringUtils.isNotEmpty(msg)){
 					jsonMap.put(Constant.result_code, Constant.fail_code);
 					jsonMap.put(Constant.result_msg, Constant.exist_user);
@@ -132,15 +139,44 @@ public class UserAction extends BaseAction
 		
 	}
 	
-	@RequestMapping(value = "users/{loginname}/status", method = RequestMethod.PUT)
-	public void activeUser(@PathVariable String loginname, HttpServletResponse response){
+	@RequestMapping(value = "/{loginName:.*}/status", method = RequestMethod.PUT)
+	public void activeUser(@PathVariable String loginName, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String name = CodecUtil.basic64Decode(loginname);
-			userService.activeUser(name);
+			userService.activeUser(loginName);
 			
 			jsonMap.put(Constant.result_code, Constant.sucess_code);
 			jsonMap.put(Constant.result_msg, Constant.sucess);
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}
+		finally{
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
+		}
+	}
+	
+	@RequestMapping(value = "/{loginName:.*}/pwd", method = RequestMethod.PUT)
+	public void updatePwd(@PathVariable String loginName,@RequestBody String body, HttpServletRequest request,HttpServletResponse response){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		JSONObject requestJson = JSONObject.fromObject(body);
+		try {
+			String oldpwd = (String)requestJson.get("oldpwd");
+			String pwd = (String)requestJson.get("passwd");
+//			String oldpwd = request.getParameter("oldpwd");
+//			String pwd = request.getParameter("passwd");
+			
+			boolean update = userService.updatePwd(loginName, oldpwd, pwd);
+			if(update){
+				jsonMap.put(Constant.result_code, Constant.sucess_code);
+				jsonMap.put(Constant.result_msg, Constant.sucess);
+			}else{
+				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_msg, Constant.wrong_pwd);
+			}
 			
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -157,47 +193,66 @@ public class UserAction extends BaseAction
 	 * 修改用户,put 方式
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/users/{username}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void updateUser(@PathVariable String username,HttpServletRequest request, HttpServletResponse response) throws IOException
+	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
-		String name = CodecUtil.basic64Decode(username);
-		log.info("update user:"+name);
-		request.getParameter("");
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		
-//		System.out.println("进入修改用户方法！   ");
-//		
-//		System.out.println("username:  " + username);
-//		
-//		User user = new User();
-//		user.setLoginName("1234@13.com");
-//		user.setNickName("myBatis");
-//		int ss = userService.updateUser(user);
-//		String mess = null;
-//		if(ss == 1)
-//		{
-//			mess = "修改成功！";
-//		}
-//		if(ss <= 0)
-//		{
-//			mess = "修改用户失败！";
-//		}
-//		response.setContentType("text/plain");
-//		response.setCharacterEncoding("UTF-8");
-//		Writer writer = null;
-//		try {
-//			writer = response.getWriter();
-//			ObjectMapper mapper = new ObjectMapper();
-//			String json = mapper.writeValueAsString(mess);
-//			writer.write(json);
-//
-//		}
-//		catch (IOException e) {
-//			LogUtil.loggerException(e);
-//		}
-//		finally {
-//			writer.close();
-//		}
+		try {
+			String me = request.getHeader("user");
+			if(StringUtils.isEmpty(me)){
+				log.error("请登录后再修改");
+				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_msg, Constant.no_login);
+			}else{
+				int type=userService.getUserType(me);
+				User user =  new User();
+				user.setLoginName(loginName);
+				user.setOpTime(new Timestamp(System.currentTimeMillis()));
+				if(type==Constant.userType.admin){
+					//管理员
+					String types = request.getParameter("usertype");
+					String status = request.getParameter("userstatus");
+					String nickname = request.getParameter("nickname");
+					String username = request.getParameter("username");
+					String comments = request.getParameter("comments");
+					String passwd = request.getParameter("passwd");
+					if(StringUtils.isNotEmpty(types)){
+						user.setUserStatus(Integer.parseInt(types));
+					}
+					if(StringUtils.isNotEmpty(status)){
+						user.setUserType(Integer.parseInt(status));
+					}
+					user.setNickName(nickname);
+					user.setSummary(comments);
+					user.setUserName(username);
+					user.setLoginPasswd(passwd);
+					
+				}else{
+					//普通
+					String nickname = request.getParameter("nickname");
+					String comments = request.getParameter("comments");
+					String passwd = request.getParameter("passwd");
+					
+					user.setSummary(comments);
+					user.setNickName(nickname);
+					user.setLoginPasswd(passwd);
+				}
+				log.info(me+" 修改用户："+loginName);
+				userService.updateUser(user);
+				jsonMap.put(Constant.result_code, Constant.sucess_code);
+				jsonMap.put(Constant.result_msg, Constant.sucess);
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}finally {
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
+		}
+		
 
 	}
 
@@ -206,9 +261,38 @@ public class UserAction extends BaseAction
 	 */
 	@RequestMapping(value = "/users/:username", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteUser()
+	public void deleteUser(@PathVariable String loginName,HttpServletRequest request, HttpServletResponse response)
 	{
-		System.out.println("hello ldp user ! ");
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		try {
+			String me = request.getHeader("user");
+			if(StringUtils.isEmpty(me)){
+				log.error("请登录后再操作");
+				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_msg, Constant.no_login);
+			}else{
+				if(userService.getUserType(me)!=Constant.userType.admin){
+					log.error(me+" 权限不够");
+					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_msg, Constant.no_auth);
+				}else{
+					log.info(me+" 删除用户："+loginName);
+					userService.deleteUser(loginName);
+					jsonMap.put(Constant.result_code, Constant.sucess_code);
+					jsonMap.put(Constant.result_msg, Constant.sucess);
+				}
+				
+			}
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}
+		finally{
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
+		}
 	}
 	
 

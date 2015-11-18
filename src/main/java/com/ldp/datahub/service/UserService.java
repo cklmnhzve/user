@@ -14,15 +14,20 @@ public interface UserService
 	
 	public String creatUser(String loginName,String pwd);
 	
+	public boolean updatePwd(String loginName,String oldPwd,String newPwd);
+	
+	
+	public int getUserType(String loginName);
+	
 	/**
 	 * 根据用户名修改用户
 	 */
-	public int updateUser(User user);
+	public void updateUser(User user);
 	
 	/**
 	 * 根据用户名删除用户
 	 */
-	public int deleteUser(User user);
+	public void deleteUser(String loginName);
 
 	public void activeUser(String loginName);
 	

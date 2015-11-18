@@ -23,13 +23,17 @@ public interface UserDao
 	
 	public void updateStatus(String loginName,int status);
 	
+	public void updatePwd(String loginName,String pwd);
+	
 	/**
 	 * 根据用户名修改用户
 	 */
-	public int updateUser(User user);
+	public void updateUser(User user);
 	
 	void delete(int id);
 	
 	void delete(String loginName);
+
+	String getPwd(String loginName);
 
 }

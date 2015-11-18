@@ -1,8 +1,10 @@
 package com.ldp.datahub.dao.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -32,8 +34,6 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		 }
 		 
 		 return users.get(0);
-//		 return(User) getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
-		
 	}
 	
 	@Override
@@ -55,6 +55,13 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	}
 	
 	@Override
+	public String getPwd(String loginName){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT LOGIN_PASSWD FROM DH_USER WHERE LOGIN_NAME=?");
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, String.class);
+	}
+	
+	@Override
 	public void delete(int id){
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM DH_USER WHERE USER_ID=?");
@@ -73,10 +80,46 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	 * 根据用户名修改用户
 	 */
 	@Override
-	public int updateUser(User user)
+	public void updateUser(User user)
 	{
-//		int t = session.update("user.updateUser", user);
-		return 0;
+
+		List<Object> args = new ArrayList<Object>();
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DH_USER SET ");
+		
+		if(StringUtils.isNotEmpty(user.getUserName())){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getUserName());
+		}
+		if(StringUtils.isNotEmpty(user.getLoginPasswd())){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getLoginPasswd());
+		}
+		if(StringUtils.isNotEmpty(user.getNickName())){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getNickName());
+		}
+		if(StringUtils.isNotEmpty(user.getSummary())){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getSummary());
+		}
+		if(user.getUserStatus()>0){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getUserStatus());
+		}
+		if(user.getUserType()>0){
+			sql.append(" USER_NAME=?,");
+			args.add(user.getUserType());
+		}
+		sql.append(" OP_TIME=?");
+		args.add(user.getOpTime());
+		
+		sql.append(" WHERE LOGIN_NAME=?");
+		
+		args.add(user.getLoginName());
+		
+		getJdbcTemplate().update(sql.toString(),args.toArray());
+		
 	}
 
 
@@ -85,6 +128,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM DH_USER WHERE LOGIN_NAME=?");
 		getJdbcTemplate().update(sql.toString(),new Object[]{loginName});
+		
+	}
+
+	@Override
+	public void updatePwd(String loginName, String pwd) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DH_USER SET LOGIN_PASSWD=? WHERE LOGIN_NAME=?");
+		Object[] args = new Object[]{pwd,loginName};
+		getJdbcTemplate().update(sql.toString(),args);
 		
 	}
 
