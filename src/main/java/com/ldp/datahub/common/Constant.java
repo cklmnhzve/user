@@ -12,8 +12,11 @@ public class Constant {
     public static final String result_data="data";
     
     public static final String no_user = "用户不存在";
+    public static final int no_user_code=1;
     public static final String exist_user = "用户已存在";
+    public static final int exist_user_code=2;
     public static final String pwd_null = "密码错误";
+    public static final int pwd_null_code=3;
     
     public static class userType{
     	public static int common =1; //普通用户

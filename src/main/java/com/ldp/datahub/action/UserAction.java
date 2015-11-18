@@ -33,6 +33,7 @@ import net.sf.json.JSONObject;
  */
 
 @Controller
+@RequestMapping(value="/users")
 public class UserAction extends BaseAction
 {
 //	private static Logger log = Logger.getLogger(UserAction.class);
@@ -55,7 +56,7 @@ public class UserAction extends BaseAction
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.GET)
 //	@ResponseBody
 	public  void getUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
@@ -75,7 +76,7 @@ public class UserAction extends BaseAction
 				}
 			}else{
 				log.error(loginName+" 不存在");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.no_user_code);
 				jsonMap.put(Constant.result_msg, loginName+" "+Constant.no_user);
 				
 			}
@@ -95,28 +96,27 @@ public class UserAction extends BaseAction
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "users/{loginname}", method = RequestMethod.POST)
-	public void addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.POST)
+	public void addtUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		
 		try {
-			String name = CodecUtil.basic64Decode(loginname);
 			String pwd = request.getParameter("passwd");
 			
-			if(StringUtils.isNotEmpty(pwd)){
-				String msg = userService.creatUser(name, pwd);
+			if(StringUtils.isEmpty(pwd)){
+				log.error("pwd is null");
+				jsonMap.put(Constant.result_code, Constant.pwd_null_code);
+				jsonMap.put(Constant.result_msg, Constant.pwd_null);
+			}else{
+				String msg = userService.creatUser(loginName, pwd);
 				if(StringUtils.isNotEmpty(msg)){
-					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_code, Constant.exist_user_code);
 					jsonMap.put(Constant.result_msg, Constant.exist_user);
 				}else{
 					jsonMap.put(Constant.result_code, Constant.sucess_code);
 					jsonMap.put(Constant.result_msg, Constant.sucess);
 				}
-			}else{
-				log.error("pwd is null");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
-				jsonMap.put(Constant.result_msg, Constant.pwd_null);
 			}
 			
 			
@@ -132,12 +132,11 @@ public class UserAction extends BaseAction
 		
 	}
 	
-	@RequestMapping(value = "users/{loginname}/status", method = RequestMethod.PUT)
-	public void activeUser(@PathVariable String loginname, HttpServletResponse response){
+	@RequestMapping(value = "/{loginName:.*}/status", method = RequestMethod.PUT)
+	public void activeUser(@PathVariable String loginName, HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String name = CodecUtil.basic64Decode(loginname);
-			userService.activeUser(name);
+			userService.activeUser(loginName);
 			
 			jsonMap.put(Constant.result_code, Constant.sucess_code);
 			jsonMap.put(Constant.result_msg, Constant.sucess);
