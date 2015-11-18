@@ -23,5 +23,7 @@ public interface UserService
 	 * 根据用户名删除用户
 	 */
 	public int deleteUser(User user);
+
+	public void activeUser(String loginName);
 	
 }

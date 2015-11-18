@@ -14,8 +14,6 @@ import com.ldp.datahub.entity.User;
 public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
 
-	
-
 	public int userLogng(User user)
 	{
 		return 1;
@@ -41,16 +39,34 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	@Override
 	public void insertUser(User user) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME) VALUES(?,?,?,?,?,?)");
-		Object[] param = new Object[]{user.getLoginName(),user.getLoginPasswd(),user.getUserStatus(),user.getUserType(),user.getNickName(),user.getOpTime()};
+		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME,USER_NAME,SUMMARY) VALUES(?,?,?,?,?,?,?,?)");
+		Object[] param = new Object[]
+				{user.getLoginName(),user.getLoginPasswd(),user.getUserStatus(),user.getUserType(),user.getNickName(),
+						user.getOpTime(),user.getUserName(),user.getSummary()};
 		getJdbcTemplate().update(sql.toString(), param);
 		
 	}
 	
+	@Override
 	public boolean isExist(String loginName){
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT LOGIN_NAME FROM DH_USER WHERE LOGIN_NAME=?");
 		return getJdbcTemplate().query(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(String.class)).size()>0;
+	}
+	
+	@Override
+	public void delete(int id){
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER WHERE USER_ID=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{id});
+	}
+	
+	@Override
+	public void updateStatus(String loginName, int status) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=?");
+		Object[] args = new Object[]{status,loginName};
+		getJdbcTemplate().update(sql.toString(),args);
 	}
 	
 	/**
@@ -63,25 +79,16 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		return 0;
 	}
 
-	/**
-	 * 根据用户名删除用户
-	 */
+
 	@Override
-	public int deleteUser(User user)
-	{
-		// TODO Auto-generated method stub
-		return 0;
+	public void delete(String loginName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER WHERE LOGIN_NAME=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{loginName});
+		
 	}
 
-	/**
-	 * 用户登录
-	 */
-	@Override
-	public int userLogin(User user)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 
 	
 

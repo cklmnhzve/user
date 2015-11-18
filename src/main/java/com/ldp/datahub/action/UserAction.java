@@ -33,7 +33,6 @@ import net.sf.json.JSONObject;
  */
 
 @Controller
-@RequestMapping("/users")
 public class UserAction extends BaseAction
 {
 //	private static Logger log = Logger.getLogger(UserAction.class);
@@ -56,27 +55,28 @@ public class UserAction extends BaseAction
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/{loginname}", method = RequestMethod.GET)
-	public  void getUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response) throws IOException
+	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.GET)
+//	@ResponseBody
+	public  void getUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
+		String json =null;
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String name = CodecUtil.basic64Decode(loginname);
 			String me = request.getHeader("user");
-			UserVo user = userService.getUser(name);
-			log.info(me+" getUser:"+name);
+			UserVo user = userService.getUser(loginName);
+			log.info(me+" getUser:"+loginName);
 			
 			if(user!=null){
 				jsonMap.put(Constant.result_code, 0);
 				jsonMap.put(Constant.result_msg, Constant.sucess);
 				jsonMap.put(Constant.result_data, user);
-				if(loginname.equals(me)){
+				if(loginName.equals(me)){
 					
 				}
 			}else{
-				log.error(name+" 不存在");
+				log.error(loginName+" 不存在");
 				jsonMap.put(Constant.result_code, Constant.fail_code);
-				jsonMap.put(Constant.result_msg, name+" "+Constant.no_user);
+				jsonMap.put(Constant.result_msg, loginName+" "+Constant.no_user);
 				
 			}
 			
@@ -85,16 +85,17 @@ public class UserAction extends BaseAction
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
 		}finally{
-			String json = JSONObject.fromObject(jsonMap).toString();
+			json = JSONObject.fromObject(jsonMap).toString();
 			sendJson(response, json);
 		}
+//		return json;
 		
 	}
 
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "/{loginname}", method = RequestMethod.POST)
+	@RequestMapping(value = "users/{loginname}", method = RequestMethod.POST)
 	public void addtUser(@PathVariable String loginname,HttpServletRequest request,HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -129,6 +130,27 @@ public class UserAction extends BaseAction
 			sendJson(response, json);
 		}
 		
+	}
+	
+	@RequestMapping(value = "users/{loginname}/status", method = RequestMethod.PUT)
+	public void activeUser(@PathVariable String loginname, HttpServletResponse response){
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		try {
+			String name = CodecUtil.basic64Decode(loginname);
+			userService.activeUser(name);
+			
+			jsonMap.put(Constant.result_code, Constant.sucess_code);
+			jsonMap.put(Constant.result_msg, Constant.sucess);
+			
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			jsonMap.put(Constant.result_code, Constant.fail_code);
+			jsonMap.put(Constant.result_msg, Constant.exception);
+		}
+		finally{
+			String json = JSONObject.fromObject(jsonMap).toString();
+			sendJson(response, json);
+		}
 	}
 
 	/**

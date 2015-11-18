@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ldp.datahub.common.Constant;
-import com.ldp.datahub.common.util.CodecUtil;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.entity.User;
 import com.ldp.datahub.service.UserService;
@@ -18,7 +17,7 @@ public class UserServiceImpl implements UserService
 	@Autowired
 	private UserDao userDao;
 	
-	
+	@Override
 	public UserVo getUser(String loginName) 
 	{
 		User user=  userDao.getUser(loginName);
@@ -34,6 +33,10 @@ public class UserServiceImpl implements UserService
 		return vo;
 	}
 	
+	@Override
+	public void activeUser(String loginName){
+		userDao.updateStatus(loginName, Constant.userStatus.ACTIVE);
+	}
 	
 
 	@Override

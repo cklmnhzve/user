@@ -11,7 +11,7 @@ public interface UserDao
 	 * @param user
 	 * @return
 	 */
-	public User getUser(String userName);
+	public User getUser(String loginName);
 	
 	/**
 	 * 新增用户
@@ -21,19 +21,15 @@ public interface UserDao
 	
 	public boolean isExist(String loginName);
 	
+	public void updateStatus(String loginName,int status);
+	
 	/**
 	 * 根据用户名修改用户
 	 */
 	public int updateUser(User user);
 	
-	/**
-	 * 根据用户名删除用户
-	 */
-	public int deleteUser(User user);
+	void delete(int id);
 	
-	/**
-	 * 用户登录
-	 */
-	public int userLogin(User user);
+	void delete(String loginName);
 
 }

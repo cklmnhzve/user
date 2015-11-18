@@ -5,9 +5,7 @@
          		<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<configuration>
-					<failOnMissingWebXml>false</failOnMissingWebXml>
-					</configuration>
+					<version>2.3</version>
 				</plugin>
          	</plugins>
          </build>
@@ -78,14 +76,22 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		
 		<!-- PERSISTENCE end -->
 
 		<!-- WEB begin -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>3.2.8.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
+		
 		
 		 <dependency>
             <groupId>org.hibernate</groupId>
@@ -161,26 +167,24 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.6</version>
         </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.6</version>
-        </dependency>
 
 		<!-- POI组件（Office支持组件） start -->
 		<!-- POI，支持.xls、.doc、.ppt等这类较老格式的Office文件 -->
+		<!--  
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.9</version>
 		</dependency>
+		-->
 		<!-- POI-OOXML，支持.xlsx、.docx、.pptx等这类格式的Office文件 -->
+		<!--
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.9</version>
 		</dependency>
+		-->
 		<!-- POI组件（Office支持组件） end -->
 
 		<!-- XmlBeans组件 start -->
@@ -243,7 +247,7 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-
+<!--  
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -257,8 +261,9 @@
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
-
+-->
 		<!-- selenium 2.0 -->
+		<!--  
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
@@ -303,12 +308,14 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		-->
 		<!-- TEST end -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.37</version>
 		</dependency>
+		<!--  
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
@@ -324,6 +331,7 @@
 			<artifactId>mybatis-ehcache</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
