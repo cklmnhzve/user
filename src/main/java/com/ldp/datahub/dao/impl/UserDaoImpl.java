@@ -92,23 +92,23 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			args.add(user.getUserName());
 		}
 		if(StringUtils.isNotEmpty(user.getLoginPasswd())){
-			sql.append(" USER_NAME=?,");
+			sql.append(" LOGIN_PASSWD=?,");
 			args.add(user.getLoginPasswd());
 		}
 		if(StringUtils.isNotEmpty(user.getNickName())){
-			sql.append(" USER_NAME=?,");
+			sql.append(" NICK_NAME=?,");
 			args.add(user.getNickName());
 		}
 		if(StringUtils.isNotEmpty(user.getSummary())){
-			sql.append(" USER_NAME=?,");
+			sql.append(" SUMMARY=?,");
 			args.add(user.getSummary());
 		}
 		if(user.getUserStatus()>0){
-			sql.append(" USER_NAME=?,");
+			sql.append(" USER_STATUS=?,");
 			args.add(user.getUserStatus());
 		}
 		if(user.getUserType()>0){
-			sql.append(" USER_NAME=?,");
+			sql.append(" USER_TYPE=?,");
 			args.add(user.getUserType());
 		}
 		sql.append(" OP_TIME=?");

@@ -1,16 +1,12 @@
 package com.ldp.datahub.action;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -32,9 +28,9 @@ import com.ldp.datahub.vo.UserVo;
 import net.sf.json.JSONObject;
 
 /**
- * 表情 控制层类
+ * 用户控制层类
  * 
- * @author: 罗振苏
+ * @author: 刘雪莹
  * @Date: 2014/10/23
  */
 
@@ -69,7 +65,7 @@ public class UserAction extends BaseAction
 		String json =null;
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String me = request.getHeader("user");
+			String me = request.getHeader("USER");
 			UserVo user = userService.getUser(loginName);
 			log.info(me+" getUser:"+loginName);
 			
@@ -103,12 +99,12 @@ public class UserAction extends BaseAction
 	 * 创建用户
 	 */
 	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.POST)
-	public void addUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response)
+	public void addUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response)
 	{
-		JSONObject requestJson = JSONObject.fromObject(body);
-		
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
+//			JSONObject requestJson = JSONObject.fromObject(body);
+//			String pwd = requestJson.getString("passwd");
 			String pwd = request.getParameter("passwd");
 			
 			if(StringUtils.isNotEmpty(pwd)){
@@ -140,7 +136,7 @@ public class UserAction extends BaseAction
 	}
 	
 	@RequestMapping(value = "/{loginName:.*}/status", method = RequestMethod.PUT)
-	public void activeUser(@PathVariable String loginName, HttpServletResponse response){
+	public void activeUser(@PathVariable String loginName,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			userService.activeUser(loginName);
@@ -160,14 +156,12 @@ public class UserAction extends BaseAction
 	}
 	
 	@RequestMapping(value = "/{loginName:.*}/pwd", method = RequestMethod.PUT)
-	public void updatePwd(@PathVariable String loginName,@RequestBody String body, HttpServletRequest request,HttpServletResponse response){
+	public void updatePwd(@PathVariable String loginName, @RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		JSONObject requestJson = JSONObject.fromObject(body);
 		try {
+			JSONObject requestJson = JSONObject.fromObject(body);
 			String oldpwd = (String)requestJson.get("oldpwd");
 			String pwd = (String)requestJson.get("passwd");
-//			String oldpwd = request.getParameter("oldpwd");
-//			String pwd = request.getParameter("passwd");
 			
 			boolean update = userService.updatePwd(loginName, oldpwd, pwd);
 			if(update){
@@ -198,9 +192,9 @@ public class UserAction extends BaseAction
 	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		
+		JSONObject requestJson = JSONObject.fromObject(body);
 		try {
-			String me = request.getHeader("user");
+			String me = request.getHeader("USER");
 			if(StringUtils.isEmpty(me)){
 				log.error("请登录后再修改");
 				jsonMap.put(Constant.result_code, Constant.fail_code);
@@ -210,39 +204,39 @@ public class UserAction extends BaseAction
 				User user =  new User();
 				user.setLoginName(loginName);
 				user.setOpTime(new Timestamp(System.currentTimeMillis()));
+				
+				//普通
+				String nickname = requestJson.getString("nickname");
+				String comments = requestJson.getString("comments");
+				String passwd = requestJson.getString("passwd");
+				
+				user.setSummary(comments);
+				user.setNickName(nickname);
+				user.setLoginPasswd(passwd);
+				
 				if(type==Constant.userType.admin){
 					//管理员
-					String types = request.getParameter("usertype");
-					String status = request.getParameter("userstatus");
-					String nickname = request.getParameter("nickname");
-					String username = request.getParameter("username");
-					String comments = request.getParameter("comments");
-					String passwd = request.getParameter("passwd");
+					String types = requestJson.getString("usertype");
+					String status = requestJson.getString("userstatus");
+					String username = requestJson.getString("username");
 					if(StringUtils.isNotEmpty(types)){
 						user.setUserStatus(Integer.parseInt(types));
 					}
 					if(StringUtils.isNotEmpty(status)){
 						user.setUserType(Integer.parseInt(status));
 					}
-					user.setNickName(nickname);
-					user.setSummary(comments);
 					user.setUserName(username);
-					user.setLoginPasswd(passwd);
-					
+				}else if(!me.equals(loginName)){
+					log.info(me+" 修改用户："+loginName+",没有权限");
+					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_msg, Constant.no_auth);
 				}else{
-					//普通
-					String nickname = request.getParameter("nickname");
-					String comments = request.getParameter("comments");
-					String passwd = request.getParameter("passwd");
-					
-					user.setSummary(comments);
-					user.setNickName(nickname);
-					user.setLoginPasswd(passwd);
+					log.info(me+" 修改用户："+loginName);
+					userService.updateUser(user);
+					jsonMap.put(Constant.result_code, Constant.sucess_code);
+					jsonMap.put(Constant.result_msg, Constant.sucess);
 				}
-				log.info(me+" 修改用户："+loginName);
-				userService.updateUser(user);
-				jsonMap.put(Constant.result_code, Constant.sucess_code);
-				jsonMap.put(Constant.result_msg, Constant.sucess);
+				
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -259,13 +253,13 @@ public class UserAction extends BaseAction
 	/**
 	 * 删除用户
 	 */
-	@RequestMapping(value = "/users/:username", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteUser(@PathVariable String loginName,HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			String me = request.getHeader("user");
+			String me = request.getHeader("USER");
 			if(StringUtils.isEmpty(me)){
 				log.error("请登录后再操作");
 				jsonMap.put(Constant.result_code, Constant.fail_code);
