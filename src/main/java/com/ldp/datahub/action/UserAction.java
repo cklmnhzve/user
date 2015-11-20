@@ -230,12 +230,12 @@ public class UserAction extends BaseAction
 					log.info(me+" 修改用户："+loginName+",没有权限");
 					jsonMap.put(Constant.result_code, Constant.fail_code);
 					jsonMap.put(Constant.result_msg, Constant.no_auth);
-				}else{
+					return;
+				}
 					log.info(me+" 修改用户："+loginName);
 					userService.updateUser(user);
 					jsonMap.put(Constant.result_code, Constant.sucess_code);
 					jsonMap.put(Constant.result_msg, Constant.sucess);
-				}
 				
 			}
 		} catch (Exception e) {
