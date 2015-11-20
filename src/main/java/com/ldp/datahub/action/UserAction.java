@@ -44,15 +44,6 @@ public class UserAction extends BaseAction
 	@Autowired
 	private UserService userService;
 	
-	
-	@RequestMapping(value="/blog/{id}",method=RequestMethod.GET)
-	public ModelAndView delete(@PathVariable Long id,HttpServletRequest request,HttpServletResponse response)
-	{
-	    //blogManager.removeById(id);
-		System.out.println("id:  " + id);
-		return null;
-	}
-
 
 	/**
 	 * 根据用户名查询用户
@@ -91,8 +82,6 @@ public class UserAction extends BaseAction
 			json = JSONObject.fromObject(jsonMap).toString();
 			sendJson(response, json);
 		}
-//		return json;
-		
 	}
 
 	/**
@@ -206,26 +195,34 @@ public class UserAction extends BaseAction
 				user.setOpTime(new Timestamp(System.currentTimeMillis()));
 				
 				//普通
-				String nickname = requestJson.getString("nickname");
-				String comments = requestJson.getString("comments");
-				String passwd = requestJson.getString("passwd");
+				Object nickname = requestJson.get("nickname");
+				Object comments = requestJson.get("comments");
+				Object passwd = requestJson.get("passwd");
 				
-				user.setSummary(comments);
-				user.setNickName(nickname);
-				user.setLoginPasswd(passwd);
-				
+				if(nickname!=null&&StringUtils.isNotEmpty(nickname.toString())){
+					user.setNickName(nickname.toString());
+				}
+				if(comments!=null&&StringUtils.isNotEmpty(comments.toString())){
+					user.setSummary(comments.toString());
+				}
+				if(passwd!=null&&StringUtils.isNotEmpty(passwd.toString())){
+					user.setLoginPasswd(passwd.toString());
+				}
 				if(type==Constant.userType.admin){
 					//管理员
-					String types = requestJson.getString("usertype");
-					String status = requestJson.getString("userstatus");
-					String username = requestJson.getString("username");
-					if(StringUtils.isNotEmpty(types)){
-						user.setUserStatus(Integer.parseInt(types));
+					Object types = requestJson.get("usertype");
+					Object status = requestJson.get("userstatus");
+					Object username = requestJson.get("username");
+					if(types!=null&&StringUtils.isNotEmpty(types.toString())){
+						user.setUserType(Integer.parseInt(types.toString()));
 					}
-					if(StringUtils.isNotEmpty(status)){
-						user.setUserType(Integer.parseInt(status));
+					if(status!=null&&StringUtils.isNotEmpty(status.toString())){
+						user.setUserStatus(Integer.parseInt(status.toString()));
 					}
-					user.setUserName(username);
+					if(username!=null&&StringUtils.isNotEmpty(username.toString())){
+						user.setUserName(username.toString());
+					}
+					
 				}else if(!me.equals(loginName)){
 					log.info(me+" 修改用户："+loginName+",没有权限");
 					jsonMap.put(Constant.result_code, Constant.fail_code);
