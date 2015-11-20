@@ -69,7 +69,7 @@ public class UserAction extends BaseAction
 				}
 			}else{
 				log.error(loginName+" 不存在");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.no_user_code);
 				jsonMap.put(Constant.result_msg, loginName+" "+Constant.no_user);
 				
 			}
@@ -92,14 +92,12 @@ public class UserAction extends BaseAction
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-//			JSONObject requestJson = JSONObject.fromObject(body);
-//			String pwd = requestJson.getString("passwd");
 			String pwd = request.getParameter("passwd");
 			
 			if(StringUtils.isNotEmpty(pwd)){
 				String msg = userService.creatUser(loginName, pwd);
 				if(StringUtils.isNotEmpty(msg)){
-					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_code, Constant.exist_user_code);
 					jsonMap.put(Constant.result_msg, Constant.exist_user);
 				}else{
 					jsonMap.put(Constant.result_code, Constant.sucess_code);
@@ -107,7 +105,7 @@ public class UserAction extends BaseAction
 				}
 			}else{
 				log.error("pwd is null");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.pwd_null_code);
 				jsonMap.put(Constant.result_msg, Constant.pwd_null);
 			}
 			
@@ -157,7 +155,7 @@ public class UserAction extends BaseAction
 				jsonMap.put(Constant.result_code, Constant.sucess_code);
 				jsonMap.put(Constant.result_msg, Constant.sucess);
 			}else{
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.wrong_pwd_code);
 				jsonMap.put(Constant.result_msg, Constant.wrong_pwd);
 			}
 			
@@ -186,7 +184,7 @@ public class UserAction extends BaseAction
 			String me = request.getHeader("USER");
 			if(StringUtils.isEmpty(me)){
 				log.error("请登录后再修改");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.no_login_code);
 				jsonMap.put(Constant.result_msg, Constant.no_login);
 			}else{
 				int type=userService.getUserType(me);
@@ -225,7 +223,7 @@ public class UserAction extends BaseAction
 					
 				}else if(!me.equals(loginName)){
 					log.info(me+" 修改用户："+loginName+",没有权限");
-					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_code, Constant.no_auth_code);
 					jsonMap.put(Constant.result_msg, Constant.no_auth);
 					return;
 				}
@@ -259,12 +257,12 @@ public class UserAction extends BaseAction
 			String me = request.getHeader("USER");
 			if(StringUtils.isEmpty(me)){
 				log.error("请登录后再操作");
-				jsonMap.put(Constant.result_code, Constant.fail_code);
+				jsonMap.put(Constant.result_code, Constant.no_login_code);
 				jsonMap.put(Constant.result_msg, Constant.no_login);
 			}else{
 				if(userService.getUserType(me)!=Constant.userType.admin){
 					log.error(me+" 权限不够");
-					jsonMap.put(Constant.result_code, Constant.fail_code);
+					jsonMap.put(Constant.result_code, Constant.no_auth_code);
 					jsonMap.put(Constant.result_msg, Constant.no_auth);
 				}else{
 					log.info(me+" 删除用户："+loginName);
