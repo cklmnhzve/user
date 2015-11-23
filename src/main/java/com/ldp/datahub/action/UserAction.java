@@ -34,7 +34,6 @@ import net.sf.json.JSONObject;
  */
 
 @Controller
-@RequestMapping(value="/users")
 public class UserAction extends BaseAction
 {
 	private static Log log = LogFactory.getLog(UserAction.class);
@@ -47,8 +46,7 @@ public class UserAction extends BaseAction
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.GET)
-//	@ResponseBody
+	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.GET)
 	public  void getUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
 		String json =null;
@@ -59,7 +57,7 @@ public class UserAction extends BaseAction
 			log.info(me+" getUser:"+loginName);
 			
 			if(user!=null){
-				jsonMap.put(Constant.result_code, 0);
+				jsonMap.put(Constant.result_code, Constant.sucess_code);
 				jsonMap.put(Constant.result_msg, Constant.sucess);
 				jsonMap.put(Constant.result_data, user);
 				if(loginName.equals(me)){
@@ -86,7 +84,7 @@ public class UserAction extends BaseAction
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.POST)
+	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.POST)
 	public void addUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -121,7 +119,7 @@ public class UserAction extends BaseAction
 		
 	}
 	
-	@RequestMapping(value = "/{loginName:.*}/active", method = RequestMethod.PUT)
+	@RequestMapping(value = "users/{loginName:.*}/active", method = RequestMethod.PUT)
 	public void activeUser(@PathVariable String loginName,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -141,7 +139,7 @@ public class UserAction extends BaseAction
 		}
 	}
 	
-	@RequestMapping(value = "/{loginName:.*}/pwd", method = RequestMethod.PUT)
+	@RequestMapping(value = "users/{loginName:.*}/pwd", method = RequestMethod.PUT)
 	public void updatePwd(@PathVariable String loginName, @RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -173,7 +171,7 @@ public class UserAction extends BaseAction
 	 * 修改用户,put 方式
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.PUT)
+	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
@@ -262,7 +260,7 @@ public class UserAction extends BaseAction
 	/**
 	 * 删除用户
 	 */
-	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response)
 	{
