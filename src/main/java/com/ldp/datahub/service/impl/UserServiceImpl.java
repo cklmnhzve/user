@@ -2,6 +2,7 @@ package com.ldp.datahub.service.impl;
 
 import java.sql.Timestamp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,18 +63,31 @@ public class UserServiceImpl implements UserService
 	 * 根据用户名修改用户
 	 */
 	@Override
-	public int updateUser(User user)
+	public void updateUser(User user)
 	{
-		int t = userDao.updateUser(user);
-		return t;
+		userDao.updateUser(user);
 	}
 
 
 	@Override
-	public int deleteUser(User user)
+	public void deleteUser(String loginName)
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
+	}
+
+	@Override
+	public boolean updatePwd(String loginName, String oldPwd, String newPwd) {
+		String pwd =userDao.getPwd(loginName);
+		if(pwd!=null&&StringUtils.isNotEmpty(newPwd)&&pwd.equals(oldPwd)){
+			userDao.updatePwd(loginName, newPwd);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int getUserType(String loginName) {
+		return userDao.getUser(loginName).getUserType();
 	}
 
 
