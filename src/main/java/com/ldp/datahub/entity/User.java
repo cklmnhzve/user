@@ -22,6 +22,15 @@ public class User
 	
 	private Timestamp opTime;
 	
+	private boolean isDestoryed;
+	
+	
+	public boolean isDestoryed() {
+		return isDestoryed;
+	}
+	public void setDestoryed(boolean isDestoryed) {
+		this.isDestoryed = isDestoryed;
+	}
 	public Timestamp getOpTime() {
 		return opTime;
 	}

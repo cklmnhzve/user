@@ -1,6 +1,5 @@
 package com.ldp.datahub.dao;
 
-
 import com.ldp.datahub.entity.User;
 
 public interface UserDao
@@ -21,7 +20,7 @@ public interface UserDao
 	
 	public boolean isExist(String loginName);
 	
-	public void updateStatus(String loginName,int status);
+	public void updateStatus(String loginName,int status,int oldStatus);
 	
 	public void updatePwd(String loginName,String pwd);
 	

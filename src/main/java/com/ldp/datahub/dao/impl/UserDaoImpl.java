@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.dao.BaseJdbcDao;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.entity.User;
@@ -16,24 +17,17 @@ import com.ldp.datahub.entity.User;
 public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
 
-	public int userLogng(User user)
-	{
-		return 1;
-	}
-
 	@Override
 	public User getUser(String loginName) 
 	{
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=?");
-		List<User> users =  getJdbcTemplate().query(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(User.class));
-		
-		 if(users.isEmpty()){
-			 return null;
-		 }
-		 
-		 return users.get(0);
+		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=? and USER_STATUS<?");
+		List<User> users =  getJdbcTemplate().query(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, BeanPropertyRowMapper.newInstance(User.class));
+		if(users.isEmpty()){
+			return null;
+		}
+		return users.get(0);
 	}
 	
 	@Override
@@ -50,15 +44,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	@Override
 	public boolean isExist(String loginName){
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT LOGIN_NAME FROM DH_USER WHERE LOGIN_NAME=?");
-		return getJdbcTemplate().query(sql.toString(), new Object[]{loginName}, BeanPropertyRowMapper.newInstance(String.class)).size()>0;
+		sql.append("SELECT LOGIN_NAME FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
+		return getJdbcTemplate().query(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, BeanPropertyRowMapper.newInstance(String.class)).size()>0;
 	}
 	
 	@Override
 	public String getPwd(String loginName){
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT LOGIN_PASSWD FROM DH_USER WHERE LOGIN_NAME=?");
-		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, String.class);
+		sql.append("SELECT LOGIN_PASSWD FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, String.class);
 	}
 	
 	@Override
@@ -69,10 +63,10 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	}
 	
 	@Override
-	public void updateStatus(String loginName, int status) {
+	public void updateStatus(String loginName, int status,int oldStatus) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=?");
-		Object[] args = new Object[]{status,loginName};
+		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=? AND USER_STATUS=?");
+		Object[] args = new Object[]{status,loginName,oldStatus};
 		getJdbcTemplate().update(sql.toString(),args);
 	}
 	
@@ -114,9 +108,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		sql.append(" OP_TIME=?");
 		args.add(user.getOpTime());
 		
-		sql.append(" WHERE LOGIN_NAME=?");
+		sql.append(" WHERE LOGIN_NAME=? ");
 		
+		if(user.isDestoryed()){
+			sql.append("AND USER_STATUS=?");
+		}else{
+			sql.append("AND USER_STATUS<?");
+		}
 		args.add(user.getLoginName());
+		args.add(Constant.userStatus.DESTROY);
 		
 		getJdbcTemplate().update(sql.toString(),args.toArray());
 		
@@ -134,8 +134,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	@Override
 	public void updatePwd(String loginName, String pwd) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE DH_USER SET LOGIN_PASSWD=? WHERE LOGIN_NAME=?");
-		Object[] args = new Object[]{pwd,loginName};
+		sql.append("UPDATE DH_USER SET LOGIN_PASSWD=? WHERE LOGIN_NAME=? AND USER_STATUS<?");
+		Object[] args = new Object[]{pwd,loginName,Constant.userStatus.DESTROY};
 		getJdbcTemplate().update(sql.toString(),args);
 		
 	}

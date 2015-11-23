@@ -5,6 +5,14 @@ public class UserVo {
 	private String userName;
 	private String comment;
 	private int userType;
+	private int userStatus;
+	
+	public int getUserStatus() {
+		return userStatus;
+	}
+	public void setUserStatus(int userStatus) {
+		this.userStatus = userStatus;
+	}
 	public String getNickName() {
 		return nickName;
 	}

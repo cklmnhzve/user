@@ -12,7 +12,7 @@ public class BaseAction {
     	 response.setContentType("text/json;charset=UTF-8");  
     	 response.setHeader("Pragma", "No-cache");  
     	 response.setHeader("Cache-Control", "no-cache");  
-    	 response.setDateHeader("Expires", 0);  
+//    	 response.setDateHeader("Expires", 0);  
     	 try {  
     		 write = response.getWriter();  
     		 write.write(text);  

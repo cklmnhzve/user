@@ -34,7 +34,8 @@ public class Constant {
 		public static int ACTIVE= 2;//激活账户
 		public static int AUTHENTICATE = 3; //认证用户
 		public static int AUTHORIZE = 4 ;//授权用户
+		public static int FREEZE = 5; //冻结账户
 		public static int DESTROY= 7;//帐号销毁
-		public static int FREEZE = 8; //冻结账户
+		
     }
 }

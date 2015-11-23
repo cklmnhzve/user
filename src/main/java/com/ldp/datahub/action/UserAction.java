@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.entity.User;
@@ -38,7 +37,6 @@ import net.sf.json.JSONObject;
 @RequestMapping(value="/users")
 public class UserAction extends BaseAction
 {
-//	private static Logger log = Logger.getLogger(UserAction.class);
 	private static Log log = LogFactory.getLog(UserAction.class);
 
 	@Autowired
@@ -67,6 +65,7 @@ public class UserAction extends BaseAction
 				if(loginName.equals(me)){
 					
 				}
+				
 			}else{
 				log.error(loginName+" 不存在");
 				jsonMap.put(Constant.result_code, Constant.no_user_code);
@@ -122,7 +121,7 @@ public class UserAction extends BaseAction
 		
 	}
 	
-	@RequestMapping(value = "/{loginName:.*}/status", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{loginName:.*}/active", method = RequestMethod.PUT)
 	public void activeUser(@PathVariable String loginName,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -211,6 +210,8 @@ public class UserAction extends BaseAction
 					Object types = requestJson.get("usertype");
 					Object status = requestJson.get("userstatus");
 					Object username = requestJson.get("username");
+					Object destoryed =  requestJson.get("destoryed");
+					
 					if(types!=null&&StringUtils.isNotEmpty(types.toString())){
 						user.setUserType(Integer.parseInt(types.toString()));
 					}
@@ -221,6 +222,19 @@ public class UserAction extends BaseAction
 						user.setUserName(username.toString());
 					}
 					
+					if(destoryed!=null&&StringUtils.isNotEmpty(destoryed.toString())){
+						if(user.getUserStatus()>0 && Integer.parseInt(destoryed.toString())==Constant.userStatus.DESTROY){
+							UserVo uu = userService.getUser(loginName);
+							if(uu!=null){
+								log.info(me+" 修改用户："+loginName+",失败，已存在激活的用户");
+								jsonMap.put(Constant.result_code, Constant.exist_user_code);
+								jsonMap.put(Constant.result_msg, Constant.exist_user);
+								return;
+							}else{
+								user.setDestoryed(true);
+							}
+						}
+					}
 				}else if(!me.equals(loginName)){
 					log.info(me+" 修改用户："+loginName+",没有权限");
 					jsonMap.put(Constant.result_code, Constant.no_auth_code);
@@ -250,9 +264,10 @@ public class UserAction extends BaseAction
 	 */
 	@RequestMapping(value = "/{loginName:.*}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteUser(@PathVariable String loginName,HttpServletRequest request, HttpServletResponse response)
+	public void deleteUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		JSONObject requestJson = JSONObject.fromObject(body);
 		try {
 			String me = request.getHeader("USER");
 			if(StringUtils.isEmpty(me)){
@@ -266,7 +281,8 @@ public class UserAction extends BaseAction
 					jsonMap.put(Constant.result_msg, Constant.no_auth);
 				}else{
 					log.info(me+" 删除用户："+loginName);
-					userService.deleteUser(loginName);
+					String status =requestJson.getString("status");
+					userService.deleteUser(loginName,Integer.parseInt(status));
 					jsonMap.put(Constant.result_code, Constant.sucess_code);
 					jsonMap.put(Constant.result_msg, Constant.sucess);
 				}

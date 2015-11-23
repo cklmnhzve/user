@@ -30,13 +30,13 @@ public class UserServiceImpl implements UserService
 		vo.setComment(user.getSummary());
 		vo.setUserName(user.getUserName());
 		vo.setUserType(user.getUserType());
-		
+		vo.setUserStatus(user.getUserStatus());
 		return vo;
 	}
 	
 	@Override
 	public void activeUser(String loginName){
-		userDao.updateStatus(loginName, Constant.userStatus.ACTIVE);
+		userDao.updateStatus(loginName, Constant.userStatus.ACTIVE,Constant.userStatus.NO_ACTIVE);
 	}
 	
 
@@ -70,9 +70,9 @@ public class UserServiceImpl implements UserService
 
 
 	@Override
-	public void deleteUser(String loginName)
+	public void deleteUser(String loginName,int status)
 	{
-		userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
+		userDao.updateStatus(loginName, Constant.userStatus.DESTROY,status);
 	}
 
 	@Override
