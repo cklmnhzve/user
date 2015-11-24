@@ -31,4 +31,6 @@ public interface UserService
 
 	public void activeUser(String loginName);
 	
+	public int getUserId(String loginName);
+	
 }

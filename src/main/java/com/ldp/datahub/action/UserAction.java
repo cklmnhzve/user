@@ -46,7 +46,7 @@ public class UserAction extends BaseAction
 	 * 根据用户名查询用户
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.GET)
+	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.GET)
 	public  void getUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
 		String json =null;
@@ -84,7 +84,7 @@ public class UserAction extends BaseAction
 	/**
 	 * 创建用户
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.POST)
+	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.POST)
 	public void addUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -119,7 +119,7 @@ public class UserAction extends BaseAction
 		
 	}
 	
-	@RequestMapping(value = "users/{loginName:.*}/active", method = RequestMethod.PUT)
+	@RequestMapping(value = "/users/{loginName:.*}/active", method = RequestMethod.PUT)
 	public void activeUser(@PathVariable String loginName,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -139,7 +139,7 @@ public class UserAction extends BaseAction
 		}
 	}
 	
-	@RequestMapping(value = "users/{loginName:.*}/pwd", method = RequestMethod.PUT)
+	@RequestMapping(value = "/users/{loginName:.*}/pwd", method = RequestMethod.PUT)
 	public void updatePwd(@PathVariable String loginName, @RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -171,7 +171,7 @@ public class UserAction extends BaseAction
 	 * 修改用户,put 方式
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
@@ -260,7 +260,7 @@ public class UserAction extends BaseAction
 	/**
 	 * 删除用户
 	 */
-	@RequestMapping(value = "users/{loginName:.*}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void deleteUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response)
 	{

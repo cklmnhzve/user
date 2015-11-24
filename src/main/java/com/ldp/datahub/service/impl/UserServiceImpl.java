@@ -90,6 +90,12 @@ public class UserServiceImpl implements UserService
 		return userDao.getUser(loginName).getUserType();
 	}
 
+	@Override
+	public int getUserId(String loginName) {
+		
+		return userDao.getUserId(loginName);
+	}
+
 
 	
 

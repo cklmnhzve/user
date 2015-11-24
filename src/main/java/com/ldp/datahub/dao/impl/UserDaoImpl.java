@@ -22,7 +22,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	{
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=? and USER_STATUS<?");
+		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
 		List<User> users =  getJdbcTemplate().query(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, BeanPropertyRowMapper.newInstance(User.class));
 		if(users.isEmpty()){
 			return null;
@@ -138,6 +138,14 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		Object[] args = new Object[]{pwd,loginName,Constant.userStatus.DESTROY};
 		getJdbcTemplate().update(sql.toString(),args);
 		
+	}
+
+	@Override
+	public int getUserId(String loginName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT USER_ID FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
+		
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, Integer.class);
 	}
 
 	

@@ -34,5 +34,7 @@ public interface UserDao
 	void delete(String loginName);
 
 	String getPwd(String loginName);
+	
+	int getUserId(String loginName);
 
 }
