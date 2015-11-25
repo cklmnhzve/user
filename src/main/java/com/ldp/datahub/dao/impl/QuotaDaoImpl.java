@@ -1,6 +1,5 @@
 package com.ldp.datahub.dao.impl;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -106,6 +105,13 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		}
 		createdTable = true;
 		return true;
+	}
+	@Override
+	public void delete(int userId, String quotaName) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER_QUOTA WHERE USER_ID=? AND QUOTA_NAME=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{userId,quotaName});
+		
 	}
 
 }

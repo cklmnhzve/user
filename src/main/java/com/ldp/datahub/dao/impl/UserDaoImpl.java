@@ -16,10 +16,12 @@ import com.ldp.datahub.entity.User;
 @Repository
 public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
+	private static boolean createdTable = false;
 
 	@Override
 	public User getUser(String loginName) 
 	{
+		checkAndCreateTable();
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT * FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
@@ -32,17 +34,41 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	
 	@Override
 	public void insertUser(User user) {
+		checkAndCreateTable();
+		
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME,USER_NAME,SUMMARY) VALUES(?,?,?,?,?,?,?,?)");
-		Object[] param = new Object[]
-				{user.getLoginName(),user.getLoginPasswd(),user.getUserStatus(),user.getUserType(),user.getNickName(),
-						user.getOpTime(),user.getUserName(),user.getSummary()};
-		getJdbcTemplate().update(sql.toString(), param);
+		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME,USER_NAME,SUMMARY");
+		if(user.getUserId()!=0){
+			sql.append(",USER_ID");
+		}
+		sql.append(")");
+		if(user.getUserId()!=0){
+			sql.append(" VALUES(?,?,?,?,?,?,?,?,?)");
+		}else{
+			sql.append(" VALUES(?,?,?,?,?,?,?,?)");
+		}
+		
+		List<Object> param = new ArrayList<Object>();
+		param.add(user.getLoginName());
+		param.add(user.getLoginPasswd());
+		param.add(user.getUserStatus());
+		param.add(user.getUserType());
+		param.add(user.getNickName());
+		param.add(user.getOpTime());
+		param.add(user.getUserName());
+		param.add(user.getSummary());
+		if(user.getUserId()!=0){
+			param.add(user.getUserId());
+		}
+		
+		getJdbcTemplate().update(sql.toString(), param.toArray());
 		
 	}
 	
 	@Override
 	public boolean isExist(String loginName){
+		checkAndCreateTable();
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT LOGIN_NAME FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
 		return getJdbcTemplate().query(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, BeanPropertyRowMapper.newInstance(String.class)).size()>0;
@@ -50,6 +76,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	
 	@Override
 	public String getPwd(String loginName){
+		checkAndCreateTable();
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT LOGIN_PASSWD FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
 		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, String.class);
@@ -57,6 +85,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	
 	@Override
 	public void delete(int id){
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM DH_USER WHERE USER_ID=?");
 		getJdbcTemplate().update(sql.toString(),new Object[]{id});
@@ -64,6 +93,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	
 	@Override
 	public void updateStatus(String loginName, int status,int oldStatus) {
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=? AND USER_STATUS=?");
 		Object[] args = new Object[]{status,loginName,oldStatus};
@@ -125,6 +155,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 
 	@Override
 	public void delete(String loginName) {
+		
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM DH_USER WHERE LOGIN_NAME=?");
 		getJdbcTemplate().update(sql.toString(),new Object[]{loginName});
@@ -148,7 +179,42 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, Integer.class);
 	}
 
-	
+	private void checkAndCreateTable(){
+		if(createdTable){
+			return;
+		}
+		StringBuilder sql = new StringBuilder();
+		try {
+			sql.append("SELECT USER_ID FROM DH_USER LIMIT 1");
+			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
+		} catch (Exception e) {
+			String msg = e.getMessage();
+			if(msg.contains("Table 'datahub.DH_USER' doesn't exist")){
+				creatTable();
+			}
+		}
+		createdTable = true;
+	}
+	private void creatTable(){
+		StringBuilder sql = new StringBuilder();
+		sql.append("CREATE TABLE DH_USER");
+		sql.append("(");
+		sql.append("USER_ID	INT NOT NULL,");
+		sql.append("USER_STATUS	INT NOT NULL,");
+		sql.append("USER_TYPE	INT COMMENT '1-普通；2-管理员',");
+		sql.append("USER_NAME	VARCHAR(64) COMMENT '登录用户名',");
+		sql.append("NICK_NAME	VARCHAR(1024),");
+		sql.append("LOGIN_NAME	VARCHAR(64),");
+		sql.append("LOGIN_PASSWD	VARCHAR(1024) COMMENT '密码，需密文存储',");
+		sql.append("SUMMARY	VARCHAR(1024),");
+		sql.append("OP_TIME	TIMESTAMP,");
+		sql.append("PRIMARY KEY (USER_ID)");
+		sql.append(");");
+		getJdbcTemplate().execute(sql.toString());
+		
+		String alterSql = "ALTER TABLE DH_USER MODIFY USER_ID INT UNSIGNED NOT NULL AUTO_INCREMENT;";
+		getJdbcTemplate().execute(alterSql);
+	}
 
 	
 
