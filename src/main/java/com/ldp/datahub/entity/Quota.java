@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class Quota {
 	private String quotaName;
 	private int quotaValue;
-	private int useValue;
+	private float useValue;
 	private String unit;
 	private int userId;
 	private Timestamp opTime;
@@ -47,12 +47,12 @@ public class Quota {
 	public void setQuotaValue(int quotaValue) {
 		this.quotaValue = quotaValue;
 	}
-	public int getUseValue() {
+	public float getUseValue() {
 		return useValue;
 	}
-	public void setUseValue(int useValue) {
+	public void setUseValue(float useValue) {
 		this.useValue = useValue;
-	} 
+	}
 	
 	
 }
