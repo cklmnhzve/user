@@ -82,7 +82,7 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		sql.append("USER_ID	VARCHAR(32) NOT NULL COMMENT '用户ID',");
 		sql.append("QUOTA_NAME	VARCHAR(32) NOT NULL COMMENT '配额名称',");
 		sql.append("QUOTA_VALUE	INT COMMENT '配额数量',");
-		sql.append("USE_VALUE	FLOAT COMMENT '使用数量',");
+		sql.append("USE_VALUE	INT COMMENT '使用数量',");
 		sql.append("UNIT	VARCHAR(32) COMMENT '单位',");
 		sql.append("OP_TIME	TIMESTAMP,");
 		sql.append("OP_USER	INT,");
