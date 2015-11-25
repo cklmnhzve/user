@@ -268,7 +268,7 @@ public class QuotaAction extends BaseAction{
 			Object ounit = requestJson.get("unit");
 			String unit="";
 			if(ounit!=null){
-				unit = unit.toString();
+				unit = ounit.toString();
 			}
 			
 			int opUser = userService.getUserId(me);
