@@ -22,6 +22,7 @@ import com.ldp.datahub.entity.RepoVo;
 import com.ldp.datahub.service.QuotaService;
 import com.ldp.datahub.service.UserService;
 
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 @Controller
 public class QuotaAction extends BaseAction{
@@ -75,8 +76,9 @@ public class QuotaAction extends BaseAction{
 			}
 			
 			JSONObject requestJson = JSONObject.fromObject(body);
-			Object privateRepo = requestJson.get("private");
-			Object publicRepo = requestJson.get("public");
+			String privateRepo = requestJson.getString("private");
+			String publicRepo = requestJson.getString("public");
+			
 			
 			int opUser = userService.getUserId(me);
 			int userId = userService.getUserId(loginName);
@@ -93,7 +95,12 @@ public class QuotaAction extends BaseAction{
 				jsonMap.put(Constant.result_msg, Constant.exist_quota);
 			}
 			
-		} catch (Exception e) {
+		}catch(JSONException je){
+			log.error("保存repo配额失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		} 
+		catch (Exception e) {
 			log.error("保存repo配额失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
@@ -116,6 +123,12 @@ public class QuotaAction extends BaseAction{
 			JSONObject requestJson = JSONObject.fromObject(body);
 			Object privateRepo = requestJson.get("private");
 			Object publicRepo = requestJson.get("public");
+			
+			if(privateRepo==null&&publicRepo==null){
+				jsonMap.put(Constant.result_code, Constant.param_err_code);
+				jsonMap.put(Constant.result_msg, Constant.param_err);
+				return;
+			}
 			
 			int opUser = userService.getUserId(me);
 			int userId = userService.getUserId(loginName);
@@ -154,6 +167,13 @@ public class QuotaAction extends BaseAction{
 			JSONObject requestJson = JSONObject.fromObject(body);
 			Object privateRepo = requestJson.get("private");
 			Object publicRepo = requestJson.get("public");
+			
+			if(privateRepo==null&&publicRepo==null){
+				jsonMap.put(Constant.result_code, Constant.param_err_code);
+				jsonMap.put(Constant.result_msg, Constant.param_err);
+				return;
+			}
+			
 			
 			int userId = userService.getUserId(loginName);
 			Integer repo1 = null;
@@ -266,6 +286,7 @@ public class QuotaAction extends BaseAction{
 			JSONObject requestJson = JSONObject.fromObject(body);
 			String quota = requestJson.getString("quota");
 			Object ounit = requestJson.get("unit");
+			
 			String unit="";
 			if(ounit!=null){
 				unit = ounit.toString();
@@ -285,7 +306,12 @@ public class QuotaAction extends BaseAction{
 				jsonMap.put(Constant.result_msg, Constant.exist_quota);
 			}
 			
-		} catch (Exception e) {
+		}catch(JSONException je){
+			log.error("保存托管配额失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		}
+		catch (Exception e) {
 			log.error("保存托管配额失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
@@ -306,18 +332,23 @@ public class QuotaAction extends BaseAction{
 			}
 			
 			JSONObject requestJson = JSONObject.fromObject(body);
-			Object quota = requestJson.get("quota");
+			String quota = requestJson.getString("quota");
 			
 			int opUser = userService.getUserId(me);
 			int userId = userService.getUserId(loginName);
-			quotaService.updateQuota(userId, opUser, Integer.parseInt(quota.toString()), Constant.QutaName.DEPOSIT);;
+			quotaService.updateQuota(userId, opUser, Integer.parseInt(quota), Constant.QutaName.DEPOSIT);;
 			
 			jsonMap.put(Constant.result_code, Constant.sucess_code);
 			jsonMap.put(Constant.result_msg, Constant.sucess);
 			log.info(me+" 更新  "+loginName+" 的托管配额 成功");
 			
 			
-		}catch (Exception e){
+		}catch(JSONException je){
+			log.error("更新托管配额失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		}
+		catch (Exception e){
 			log.error("更新托管配额失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
@@ -385,7 +416,12 @@ public class QuotaAction extends BaseAction{
 				jsonMap.put(Constant.result_msg, Constant.exist_quota);
 			}
 			
-		} catch (Exception e) {
+		}catch(JSONException je){
+			log.error("保存下载量配额失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		} 
+		catch (Exception e) {
 			log.error("保存下载量配额失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
@@ -406,18 +442,23 @@ public class QuotaAction extends BaseAction{
 			}
 			
 			JSONObject requestJson = JSONObject.fromObject(body);
-			Object quota = requestJson.get("quota");
+			String quota = requestJson.getString("quota");
 			
 			int opUser = userService.getUserId(me);
 			int userId = userService.getUserId(loginName);
-			quotaService.updateQuota(userId, opUser, Integer.parseInt(quota.toString()), Constant.QutaName.PULL_NUM);;
+			quotaService.updateQuota(userId, opUser, Integer.parseInt(quota), Constant.QutaName.PULL_NUM);;
 			
 			jsonMap.put(Constant.result_code, Constant.sucess_code);
 			jsonMap.put(Constant.result_msg, Constant.sucess);
 			log.info(me+" 更新  "+loginName+" 的下载量配额 成功");
 			
 			
-		}catch (Exception e){
+		}catch(JSONException je){
+			log.error("更新下载量配额失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		}
+		catch (Exception e){
 			log.error("更新下载量配额失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);
@@ -446,7 +487,12 @@ public class QuotaAction extends BaseAction{
 			jsonMap.put(Constant.result_msg, Constant.sucess);
 			log.info(me+" 更新   "+loginName+" 的下载使用量 成功");
 			
-		} catch (Exception e) {
+		}catch(JSONException je){
+			log.error("更新下载使用量失败，请求参数错误");
+			jsonMap.put(Constant.result_code, Constant.param_err_code);
+			jsonMap.put(Constant.result_msg, Constant.param_err);
+		} 
+		catch (Exception e) {
 			log.error("更新下载使用量失败，"+e.getMessage());
 			jsonMap.put(Constant.result_code, Constant.fail_code);
 			jsonMap.put(Constant.result_msg, Constant.exception);

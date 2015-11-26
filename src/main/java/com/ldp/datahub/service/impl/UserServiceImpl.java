@@ -5,10 +5,12 @@ import java.sql.Timestamp;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.entity.User;
+import com.ldp.datahub.service.QuotaService;
 import com.ldp.datahub.service.UserService;
 import com.ldp.datahub.vo.UserVo;
 
@@ -17,6 +19,8 @@ public class UserServiceImpl implements UserService
 {
 	@Autowired
 	private UserDao userDao;
+	@Autowired
+	private QuotaService quotaService;
 	
 	@Override
 	public UserVo getUser(String loginName) 
@@ -41,6 +45,7 @@ public class UserServiceImpl implements UserService
 	
 
 	@Override
+	@Transactional
 	public String creatUser(String loginName, String pwd) {
 		
 		if(userDao.isExist(loginName)){
@@ -54,7 +59,13 @@ public class UserServiceImpl implements UserService
 		user.setUserType(Constant.userType.common);
 		user.setOpTime(new Timestamp(System.currentTimeMillis()));
 
-		userDao.insertUser(user);
+		int userId = userDao.insertUser(user);
+		
+		//增加quota信息
+		quotaService.saveRepo(userId, -1, 0, 0);
+		quotaService.saveQuota(userId, -1, 0, Constant.QutaName.DEPOSIT, "M");
+		quotaService.saveQuota(userId, -1, 500, Constant.QutaName.PULL_NUM, "");
+		
 		return "";
 	}
 

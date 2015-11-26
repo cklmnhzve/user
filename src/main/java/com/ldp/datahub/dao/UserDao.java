@@ -16,7 +16,7 @@ public interface UserDao
 	 * 新增用户
 	 * @param user
 	 */
-	public void insertUser(User user);
+	public int insertUser(User user);
 	
 	public boolean isExist(String loginName);
 	

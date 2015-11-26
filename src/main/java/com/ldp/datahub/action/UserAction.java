@@ -101,9 +101,8 @@ public class UserAction extends BaseAction
 					jsonMap.put(Constant.result_msg, Constant.sucess);
 				}
 			}else{
-				log.error("pwd is null");
-				jsonMap.put(Constant.result_code, Constant.pwd_null_code);
-				jsonMap.put(Constant.result_msg, Constant.pwd_null);
+				jsonMap.put(Constant.result_code, Constant.param_err_code);
+				jsonMap.put(Constant.result_msg, Constant.param_err);
 			}
 			
 			
@@ -144,8 +143,16 @@ public class UserAction extends BaseAction
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			JSONObject requestJson = JSONObject.fromObject(body);
-			String oldpwd = (String)requestJson.get("oldpwd");
-			String pwd = (String)requestJson.get("passwd");
+			String oldpwd="";
+			String pwd="";
+			try {
+				oldpwd = (String)requestJson.get("oldpwd");
+				pwd = (String)requestJson.get("passwd");
+			} catch (Exception e) {
+				jsonMap.put(Constant.result_code, Constant.param_err_code);
+				jsonMap.put(Constant.result_msg, Constant.param_err);
+				return;
+			}
 			
 			boolean update = userService.updatePwd(loginName, oldpwd, pwd);
 			if(update){

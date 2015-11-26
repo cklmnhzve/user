@@ -33,7 +33,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	}
 	
 	@Override
-	public void insertUser(User user) {
+	public int insertUser(User user) {
 		checkAndCreateTable();
 		
 		StringBuilder sql = new StringBuilder();
@@ -63,6 +63,9 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		
 		getJdbcTemplate().update(sql.toString(), param.toArray());
 		
+		String idSql = "select last_insert_id()";
+		int id = getJdbcTemplate().queryForObject(idSql, Integer.class);
+		return id;
 	}
 	
 	@Override
