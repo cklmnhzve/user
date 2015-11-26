@@ -54,8 +54,6 @@ RUN cd  ./webapps/ \
     && mvn  install
 
 run cd ./webapps/ \
-    && mkdir  data \
-    && chmod 666 data \
     && mv ./server.xml /usr/local/tomcat/conf/ \
     && mv ./target/datahub_user-1.0-SNAPSHOT .
 

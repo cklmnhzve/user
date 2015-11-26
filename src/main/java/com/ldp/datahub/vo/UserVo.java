@@ -1,6 +1,7 @@
 package com.ldp.datahub.vo;
 
 public class UserVo {
+	
 	private String nickName;
 	private String userName;
 	private String comment;
