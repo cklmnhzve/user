@@ -33,7 +33,7 @@ public class QuotaAction extends BaseAction{
 	
 	private static Log log = LogFactory.getLog(QuotaAction.class);
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.GET)
 	public void getRepo(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -63,7 +63,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.POST)
 	public void addRepo(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -109,7 +109,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.PUT)
 	public void updateRepoQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -155,7 +155,7 @@ public class QuotaAction extends BaseAction{
 			sendJson(response, json);
 		}
 	}
-	@RequestMapping(value = "/users/{loginName:.*}/repository/use", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository/use", method = RequestMethod.POST)
 	public void updateRepoUse(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");
@@ -202,7 +202,7 @@ public class QuotaAction extends BaseAction{
 	
 	
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.GET)
 	public void getDeposit(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -233,7 +233,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.POST)
 	public void addDeposit(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -282,7 +282,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.PUT)
 	public void updateDepositQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -319,7 +319,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.GET)
 	public void getPull(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -349,7 +349,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.POST)
 	public void addPull(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -392,7 +392,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.PUT)
 	public void updatePullQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -429,7 +429,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum/use", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum/use", method = RequestMethod.POST)
 	public void updatePullUse(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");

@@ -47,7 +47,7 @@ public class VipAction extends BaseAction
 	 * 根据用户名查询会员信息
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/users/{loginName:.*}/vip", method = RequestMethod.GET)
+	@RequestMapping(value = "/vip/{loginName:.*}", method = RequestMethod.GET)
 	public  void getVip(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response) throws IOException
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
@@ -85,7 +85,7 @@ public class VipAction extends BaseAction
 		}
 	}
 
-	@RequestMapping(value = "/users/{loginName:.*}/vip", method = RequestMethod.PUT)
+	@RequestMapping(value = "/vip/{loginName:.*}", method = RequestMethod.PUT)
 	public void updateLevel(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");
@@ -121,29 +121,5 @@ public class VipAction extends BaseAction
 		}
 	}
 	
-
-	/**
-	 * 修改用户,put 方式
-	 * @throws IOException 
-	 */
-//	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.PUT)
-//	@ResponseBody
-//	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
-//	{
-//		Map<String, Object> jsonMap = new HashMap<String, Object>();
-//		JSONObject requestJson = JSONObject.fromObject(body);
-//		try {
-//			String me = request.getHeader("USER");
-//		} catch (Exception e) {
-//			log.error(e.getMessage());
-//			jsonMap.put(Constant.result_code, Constant.fail_code);
-//			jsonMap.put(Constant.result_msg, Constant.exception);
-//		}finally {
-//			String json = JSONObject.fromObject(jsonMap).toString();
-//			sendJson(response, json);
-//		}
-//		
-//
-//	}
 
 }
