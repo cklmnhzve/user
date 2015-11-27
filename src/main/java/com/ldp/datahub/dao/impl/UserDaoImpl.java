@@ -1,6 +1,7 @@
 package com.ldp.datahub.dao.impl;
 
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -135,7 +136,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			args.add(user.getUserType());
 		}
 		sql.append(" OP_TIME=?");
-		args.add(user.getOpTime());
+		args.add(new Timestamp(System.currentTimeMillis()));
 		
 		sql.append(" WHERE LOGIN_NAME=? ");
 		

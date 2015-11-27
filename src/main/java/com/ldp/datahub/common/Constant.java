@@ -1,14 +1,5 @@
 package com.ldp.datahub.common;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.ldp.datahub.action.BaseAction;
-
 public class Constant {
 	
 	public static final int sucess_code=0;
@@ -23,14 +14,16 @@ public class Constant {
     
     public static final int param_err_code=1007;
     public static final String param_err="invalid parameters";
+    
+    public static final int no_info_code = 1009;
+    public static final String no_info = "not found";
+    
+    
     public static final int no_user_code=6002;
     public static final String no_user = "user not registered yet";
     
     public static final int exist_user_code=8002;
     public static final String exist_user = "user exist";
-    
-//    public static final int pwd_null_code=8003;
-//    public static final String pwd_null = "pwd is null";
     
     public static final int wrong_pwd_code=8004;
     public static final String wrong_pwd = "pwd wrong";
@@ -47,10 +40,10 @@ public class Constant {
     public static final int exist_quota_code=8006;
     public static final String exist_quota = "quota exist";
     
-    public static class userType{
-    	public static int common =1; //普通用户
-    	public static int admin =2; //管理员
-    }
+//    public static class userType{
+//    	public static int common =1; //普通用户
+//    	public static int admin =2; //管理员
+//    }
     
     public static class userStatus{
     	public static int NO_ACTIVE=1; //未激活账户
@@ -68,5 +61,30 @@ public class Constant {
     	
     	public static String PULL_NUM = "pull_num"; //下载
     	public static String DEPOSIT = "deposit"; //托管
+    	
+    	public static String PAY_WAY ="pay_way";//付费方式
+    	public static String FEE="fee";//年费
     }
+    
+    public static class PayWay{
+    	public static int FREE = 0;//免费
+    	public static int BEFORE=1;//预付费
+    	public static int AFTER =2;//后付费
+    }
+    
+    public static class Status{
+    	public static int TO_AUDIT=1;//待审核
+    	public static int EFFECT = 2;//生效
+    	public static int FAILED = 3;//失效
+    	public static int DELETE = 4;//删除
+    }
+    
+    public static class UserType{
+    	public static int REGIST=1;
+    	public static int ADMIN=2;
+    	public static int VIP1=3;
+    	public static int VIP2 = 4;
+    	public static int VIP3 = 5;
+    }
+  
 }

@@ -37,7 +37,8 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		sql.append("INSERT INTO DH_USER_QUOTA (USER_ID,QUOTA_NAME,QUOTA_VALUE,USE_VALUE,UNIT,OP_TIME,OP_USER) ");
 		sql.append("VALUES (?,?,?,?,?,?,?)");
 		Object[] param = new Object[]
-				{quota.getUserId(),quota.getQuotaName(),quota.getQuotaValue(),quota.getUseValue(),quota.getUnit(),quota.getOpTime(),quota.getOpUser()};
+				{quota.getUserId(),quota.getQuotaName(),quota.getQuotaValue(),quota.getUseValue(),quota.getUnit(),
+						new Timestamp(System.currentTimeMillis()),quota.getOpUser()};
 		getJdbcTemplate().update(sql.toString(), param);
 		
 	}

@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,45 +200,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	/**
-	 * 判断是否为管理员权限
-	 * @param me
-	 * @param jsonMap
-	 * @return
-	 */
-	private boolean isAdmin(String me,Map<String, Object> jsonMap){
-		if(StringUtils.isEmpty(me)){
-			log.error("请登录后再修改");
-			jsonMap.put(Constant.result_code, Constant.no_login_code);
-			jsonMap.put(Constant.result_msg, Constant.no_login);
-			return false;
-		}else{
-			if(userService.getUserType(me)!=Constant.userType.admin){
-				log.error(me+" 权限不够");
-				jsonMap.put(Constant.result_code, Constant.no_auth_code);
-				jsonMap.put(Constant.result_msg, Constant.no_auth);
-				return false;
-			}
-		}
-		return true;
-	}
 	
-	private boolean isAdminOrI(String me,String loginName,Map<String, Object> jsonMap){
-		if(StringUtils.isEmpty(me)){
-			log.error("请登录后再修改");
-			jsonMap.put(Constant.result_code, Constant.no_login_code);
-			jsonMap.put(Constant.result_msg, Constant.no_login);
-			return false;
-		}else{
-			if(userService.getUserType(me)!=Constant.userType.admin && !me.equals(loginName)){
-				log.error(me+" 权限不够");
-				jsonMap.put(Constant.result_code, Constant.no_auth_code);
-				jsonMap.put(Constant.result_msg, Constant.no_auth);
-				return false;
-			}
-		}
-		return true;
-	}
 	
 	@RequestMapping(value = "/users/{loginName:.*}/deposit", method = RequestMethod.GET)
 	public void getDeposit(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){

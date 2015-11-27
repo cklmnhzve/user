@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService
 		user.setNickName(loginName.substring(0,loginName.indexOf("@")));
 		user.setLoginPasswd(pwd);
 		user.setUserStatus(Constant.userStatus.NO_ACTIVE);
-		user.setUserType(Constant.userType.common);
+		user.setUserType(Constant.UserType.REGIST);
 		user.setOpTime(new Timestamp(System.currentTimeMillis()));
 
 		int userId = userDao.insertUser(user);

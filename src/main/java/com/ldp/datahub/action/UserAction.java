@@ -210,7 +210,7 @@ public class UserAction extends BaseAction
 				if(passwd!=null&&StringUtils.isNotEmpty(passwd.toString())){
 					user.setLoginPasswd(passwd.toString());
 				}
-				if(type==Constant.userType.admin){
+				if(type==Constant.UserType.ADMIN){
 					//管理员
 					Object types = requestJson.get("usertype");
 					Object status = requestJson.get("userstatus");
@@ -280,7 +280,7 @@ public class UserAction extends BaseAction
 				jsonMap.put(Constant.result_code, Constant.no_login_code);
 				jsonMap.put(Constant.result_msg, Constant.no_login);
 			}else{
-				if(userService.getUserType(me)!=Constant.userType.admin){
+				if(userService.getUserType(me)!=Constant.UserType.ADMIN){
 					log.error(me+" 权限不够");
 					jsonMap.put(Constant.result_code, Constant.no_auth_code);
 					jsonMap.put(Constant.result_msg, Constant.no_auth);

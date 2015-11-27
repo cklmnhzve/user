@@ -36,5 +36,7 @@ public interface UserDao
 	String getPwd(String loginName);
 	
 	int getUserId(String loginName);
+	
+	
 
 }
