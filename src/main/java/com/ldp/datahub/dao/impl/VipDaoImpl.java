@@ -15,9 +15,10 @@ import com.ldp.datahub.dao.VipDao;
 import com.ldp.datahub.entity.Vip;
 
 @Repository
-public class VipQuotaDaoImpl extends BaseJdbcDao implements VipDao {
+public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 	
 	private static boolean createdTable = false;
+	public static String TABLENAME = "DH_VIP";
 
 	@Override
 	public List<Vip> getVipQuota(int type) {

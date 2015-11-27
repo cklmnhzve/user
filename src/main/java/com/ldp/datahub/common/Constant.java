@@ -40,11 +40,6 @@ public class Constant {
     public static final int exist_quota_code=8006;
     public static final String exist_quota = "quota exist";
     
-//    public static class userType{
-//    	public static int common =1; //普通用户
-//    	public static int admin =2; //管理员
-//    }
-    
     public static class userStatus{
     	public static int NO_ACTIVE=1; //未激活账户
 		public static int ACTIVE= 2;//激活账户
@@ -85,6 +80,12 @@ public class Constant {
     	public static int VIP1=3;
     	public static int VIP2 = 4;
     	public static int VIP3 = 5;
+    }
+    
+    public static class OpType{
+    	public static int ADD = 1;
+    	public static int UPDATE = 2;
+    	public static int DELETE = 3;
     }
   
 }

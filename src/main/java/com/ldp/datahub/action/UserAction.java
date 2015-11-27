@@ -119,10 +119,14 @@ public class UserAction extends BaseAction
 	}
 	
 	@RequestMapping(value = "/users/{loginName:.*}/active", method = RequestMethod.PUT)
-	public void activeUser(@PathVariable String loginName,HttpServletResponse response){
+	public void activeUser(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
-			userService.activeUser(loginName);
+			String me = request.getHeader("USER");
+			if(!isAdmin(me, jsonMap)){
+				return;
+			}
+			userService.activeUser(loginName,userService.getUserId(me));
 			
 			jsonMap.put(Constant.result_code, Constant.sucess_code);
 			jsonMap.put(Constant.result_msg, Constant.sucess);
@@ -191,7 +195,8 @@ public class UserAction extends BaseAction
 				jsonMap.put(Constant.result_code, Constant.no_login_code);
 				jsonMap.put(Constant.result_msg, Constant.no_login);
 			}else{
-				int type=userService.getUserType(me);
+				UserVo opUser = userService.getUser(me);
+				int type=opUser.getUserType();
 				User user =  new User();
 				user.setLoginName(loginName);
 				user.setOpTime(new Timestamp(System.currentTimeMillis()));
@@ -243,7 +248,7 @@ public class UserAction extends BaseAction
 					return;
 				}
 					log.info(me+" 修改用户："+loginName);
-					userService.updateUser(user);
+					userService.updateUser(user,opUser.getUserId());
 					jsonMap.put(Constant.result_code, Constant.sucess_code);
 					jsonMap.put(Constant.result_msg, Constant.sucess);
 				
@@ -268,27 +273,17 @@ public class UserAction extends BaseAction
 	public void deleteUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
-		JSONObject requestJson = JSONObject.fromObject(body);
 		try {
 			String me = request.getHeader("USER");
-			if(StringUtils.isEmpty(me)){
-				log.error("请登录后再操作");
-				jsonMap.put(Constant.result_code, Constant.no_login_code);
-				jsonMap.put(Constant.result_msg, Constant.no_login);
-			}else{
-				if(userService.getUserType(me)!=Constant.UserType.ADMIN){
-					log.error(me+" 权限不够");
-					jsonMap.put(Constant.result_code, Constant.no_auth_code);
-					jsonMap.put(Constant.result_msg, Constant.no_auth);
-				}else{
-					log.info(me+" 删除用户："+loginName);
-					String status =requestJson.getString("status");
-					userService.deleteUser(loginName,Integer.parseInt(status));
-					jsonMap.put(Constant.result_code, Constant.sucess_code);
-					jsonMap.put(Constant.result_msg, Constant.sucess);
-				}
-				
+			if(!isAdmin(me, jsonMap)){
+				return;
 			}
+
+			log.info(me+" 删除用户："+loginName);
+//			String status =requestJson.getString("status");
+			userService.deleteUser(loginName,userService.getUserId(me));
+			jsonMap.put(Constant.result_code, Constant.sucess_code);
+			jsonMap.put(Constant.result_msg, Constant.sucess);
 			
 		} catch (Exception e) {
 			log.error(e.getMessage());

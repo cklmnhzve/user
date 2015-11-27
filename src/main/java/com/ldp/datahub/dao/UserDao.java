@@ -20,7 +20,7 @@ public interface UserDao
 	
 	public boolean isExist(String loginName);
 	
-	public void updateStatus(String loginName,int status,int oldStatus);
+	public void updateStatus(String loginName,int status);
 	
 	public void updatePwd(String loginName,String pwd);
 	

@@ -67,8 +67,8 @@ public class UserDaoTest {
 		userDao.insertUser(user);
 		try {			//普通状态修改
 			int newStatus = Constant.userStatus.AUTHORIZE;
-			userDao.updateStatus(user.getLoginName(), newStatus, user.getUserStatus());
-			User actual = userDao.getUser(user.getLoginName());			Assert.assertEquals(newStatus, actual.getUserStatus());			//修改成注销状态			int oldStatus = newStatus;			newStatus = Constant.userStatus.DESTROY;			userDao.updateStatus(user.getLoginName(), newStatus, oldStatus);			actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);
+			userDao.updateStatus(user.getLoginName(), newStatus);
+			User actual = userDao.getUser(user.getLoginName());			Assert.assertEquals(newStatus, actual.getUserStatus());			//修改成注销状态			int oldStatus = newStatus;			newStatus = Constant.userStatus.DESTROY;			userDao.updateStatus(user.getLoginName(), newStatus);			actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);
 		} finally {
 			userDao.delete(testID);
 		}

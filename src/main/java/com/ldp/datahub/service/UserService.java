@@ -22,14 +22,14 @@ public interface UserService
 	/**
 	 * 根据用户名修改用户
 	 */
-	public void updateUser(User user);
+	public void updateUser(User user,int opUser);
 	
 	/**
 	 * 根据用户名删除用户
 	 */
-	public void deleteUser(String loginName,int status);
+	public void deleteUser(String loginName,int opUser);
 
-	public void activeUser(String loginName);
+	public void activeUser(String loginName,int opUser);
 	
 	public int getUserId(String loginName);
 	

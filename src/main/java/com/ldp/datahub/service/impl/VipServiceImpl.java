@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.common.Constant.QutaName;
 import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.dao.UserDao;
+import com.ldp.datahub.dao.UserLogDao;
 import com.ldp.datahub.dao.VipDao;
+import com.ldp.datahub.dao.impl.VipDaoImpl;
 import com.ldp.datahub.entity.Quota;
 import com.ldp.datahub.entity.User;
+import com.ldp.datahub.entity.UserLog;
 import com.ldp.datahub.entity.Vip;
 import com.ldp.datahub.entity.VipVo;
 import com.ldp.datahub.service.VipService;
@@ -28,6 +32,9 @@ public class VipServiceImpl implements VipService
 	private UserDao userDao;
 	@Autowired
 	private QuotaDao quotaDao;
+	
+	@Autowired
+	private UserLogDao userLogDao;
 	
 	@Override
 	public VipVo getUserVipQuota(int userType){
@@ -106,8 +113,19 @@ public class VipServiceImpl implements VipService
 					newValue = num+add;
 				}
 				quotaDao.updateQuota(newValue, opUser, userId, name);
+				updateLog(userId, opUser, name, newValue);
 			}
 		}
+	}
+	
+	private void updateLog(int userId,int opUser,String quotaName,int value){
+		UserLog ulog = new UserLog();
+		ulog.setChangeUser(userId);
+		ulog.setChangeInfo(quotaName+":"+value);
+		ulog.setOpTable(VipDaoImpl.TABLENAME);
+		ulog.setOpType(Constant.OpType.UPDATE);
+		ulog.setOpUser(opUser);
+		userLogDao.save(ulog);
 	}
 	
 	private Map<String,Vip> toMap(List<Vip> vips){

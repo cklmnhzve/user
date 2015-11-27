@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.dao.UserDao;
+import com.ldp.datahub.dao.UserLogDao;
+import com.ldp.datahub.dao.impl.UserDaoImpl;
 import com.ldp.datahub.entity.User;
+import com.ldp.datahub.entity.UserLog;
 import com.ldp.datahub.service.QuotaService;
 import com.ldp.datahub.service.UserService;
 import com.ldp.datahub.vo.UserVo;
@@ -21,6 +24,8 @@ public class UserServiceImpl implements UserService
 	private UserDao userDao;
 	@Autowired
 	private QuotaService quotaService;
+	@Autowired
+	private UserLogDao userLogDao;
 	
 	@Override
 	public UserVo getUser(String loginName) 
@@ -30,6 +35,7 @@ public class UserServiceImpl implements UserService
 			return null;
 		}
 		UserVo vo = new UserVo();
+		vo.setUserId(user.getUserId());
 		vo.setNickName(user.getNickName());
 		vo.setComment(user.getSummary());
 		vo.setUserName(user.getUserName());
@@ -39,9 +45,19 @@ public class UserServiceImpl implements UserService
 	}
 	
 	@Override
-	public void activeUser(String loginName){
-		userDao.updateStatus(loginName, Constant.userStatus.ACTIVE,Constant.userStatus.NO_ACTIVE);
+	public void activeUser(String loginName,int opUser){
+		userDao.updateStatus(loginName, Constant.userStatus.ACTIVE);
+		
+		UserLog ulog = new UserLog();
+		ulog.setChangeUser(getUserId(loginName));
+		ulog.setChangeInfo("userStatus:"+Constant.userStatus.ACTIVE);
+		ulog.setOpTable(UserDaoImpl.tableName);
+		ulog.setOpType(Constant.OpType.UPDATE);
+		ulog.setOpUser(opUser);
+		userLogDao.save(ulog);
 	}
+	
+	
 	
 
 	@Override
@@ -74,16 +90,56 @@ public class UserServiceImpl implements UserService
 	 * 根据用户名修改用户
 	 */
 	@Override
-	public void updateUser(User user)
+	public void updateUser(User user,int opUser)
 	{
 		userDao.updateUser(user);
+		
+		UserLog ulog = new UserLog();
+		ulog.setChangeUser(getUserId(user.getLoginName()));
+		
+		ulog.setChangeInfo(findChangeInfo(user));
+		
+		ulog.setOpTable(UserDaoImpl.tableName);
+		ulog.setOpType(Constant.OpType.UPDATE);
+		ulog.setOpUser(opUser);
+		userLogDao.save(ulog);
+	}
+	
+	private String findChangeInfo(User user){
+		StringBuilder info = new StringBuilder();
+		if(StringUtils.isNotEmpty(user.getLoginPasswd())){
+			info.append("loginPasswd:"+user.getLoginPasswd()+";");
+		}
+		if(StringUtils.isNotEmpty(user.getNickName())){
+			info.append("nickName:"+user.getNickName()+";");
+		}
+		if(StringUtils.isNotEmpty(user.getSummary())){
+			info.append("summary:"+user.getSummary()+";");
+		}
+		if(StringUtils.isNotEmpty(user.getUserName())){
+			info.append("userName:"+user.getUserName()+";");
+		}if(user.getUserStatus()>0){
+			info.append("userStatus:"+user.getUserStatus()+";");
+		}if(user.getUserType()>0){
+			info.append("userType:"+user.getUserType()+";");
+		}
+		
+		return info.toString();
 	}
 
 
 	@Override
-	public void deleteUser(String loginName,int status)
+	public void deleteUser(String loginName,int opUser)
 	{
-		userDao.updateStatus(loginName, Constant.userStatus.DESTROY,status);
+		UserLog ulog = new UserLog();
+		ulog.setChangeUser(getUserId(loginName));
+		ulog.setChangeInfo("删除");
+		ulog.setOpTable(UserDaoImpl.tableName);
+		ulog.setOpType(Constant.OpType.DELETE);
+		ulog.setOpUser(opUser);
+		userLogDao.save(ulog);
+		
+		userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
 	}
 
 	@Override

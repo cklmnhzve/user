@@ -14,6 +14,8 @@ import com.ldp.datahub.entity.Quota;
 public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 	private static boolean createdTable = false;
 	
+	public static String TABLENAME="DH_USER_QUOTA";
+	
 	@Override
 	public Quota getQuota(int userId,String quotaName) {
 		if(!createdTable&&!isExistTable()){

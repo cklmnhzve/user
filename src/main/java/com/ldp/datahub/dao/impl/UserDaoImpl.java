@@ -18,6 +18,7 @@ import com.ldp.datahub.entity.User;
 public class UserDaoImpl extends BaseJdbcDao implements UserDao
 {
 	private static boolean createdTable = false;
+	public static String tableName="DH_USER";
 
 	@Override
 	public User getUser(String loginName) 
@@ -92,12 +93,19 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	}
 	
 	@Override
-	public void updateStatus(String loginName, int status,int oldStatus) {
+	public void updateStatus(String loginName, int status) {
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=? AND USER_STATUS=?");
-		Object[] args = new Object[]{status,loginName,oldStatus};
+		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=? AND ");
+		if(status==Constant.userStatus.DESTROY){
+			sql.append(" USER_STATUS!=?");
+		}else {
+			sql.append(" USER_STATUS<?");
+		}
+		Object[] args = new Object[]{status,loginName,Constant.userStatus.DESTROY};
 		getJdbcTemplate().update(sql.toString(),args);
+		
+		
 	}
 	
 	/**

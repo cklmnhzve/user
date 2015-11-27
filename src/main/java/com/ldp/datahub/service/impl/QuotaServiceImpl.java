@@ -7,11 +7,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ldp.datahub.common.Constant;
+import com.ldp.datahub.common.Constant.OpType;
 import com.ldp.datahub.common.Constant.QutaName;
 import com.ldp.datahub.dao.QuotaDao;
+import com.ldp.datahub.dao.UserLogDao;
+import com.ldp.datahub.dao.impl.QuotaDaoImpl;
 import com.ldp.datahub.entity.Quota;
 import com.ldp.datahub.entity.QuotaVo;
 import com.ldp.datahub.entity.RepoVo;
+import com.ldp.datahub.entity.UserLog;
 import com.ldp.datahub.service.QuotaService;
 
 @Service
@@ -19,6 +23,8 @@ public class QuotaServiceImpl implements QuotaService {
 	
 	@Autowired
 	private QuotaDao quotaDao;
+	@Autowired
+	private UserLogDao userLogDao;
 
 	@Override
 	public RepoVo getRepos(int userId) {
@@ -73,8 +79,17 @@ public class QuotaServiceImpl implements QuotaService {
 		quota.setQuotaName(Constant.QutaName.REPO_PRIVATE);
 		quota.setQuotaValue(privateRepo);
 		quotaDao.saveQuota(quota);
+		
+		UserLog ulog = new UserLog();
+		ulog.setOpUser(opUser);
+		ulog.setChangeInfo("添加repo");
+		ulog.setOpTable(QuotaDaoImpl.TABLENAME);
+		ulog.setOpType(OpType.ADD);
+		ulog.setChangeUser(userId);
+		userLogDao.save(ulog);
 		return true;
 	}
+	
 
 	@Override
 	@Transactional
@@ -86,6 +101,14 @@ public class QuotaServiceImpl implements QuotaService {
 		if(publicRepo!=null){
 			quotaDao.updateQuota(publicRepo, opUser, userId, Constant.QutaName.REPO_PUBLIC);
 		}
+		
+		UserLog ulog = new UserLog();
+		ulog.setOpUser(opUser);
+		ulog.setChangeInfo("privateRepo:"+privateRepo+";publicRepo"+publicRepo);
+		ulog.setOpTable(QuotaDaoImpl.TABLENAME);
+		ulog.setOpType(OpType.UPDATE);
+		ulog.setChangeUser(userId);
+		userLogDao.save(ulog);
 	}
 
 	@Override
@@ -115,12 +138,28 @@ public class QuotaServiceImpl implements QuotaService {
 		quota.setUseValue(0);
 		quotaDao.saveQuota(quota);
 		
+		UserLog ulog = new UserLog();
+		ulog.setOpUser(opUser);
+		ulog.setChangeInfo("添加 "+quotaName);
+		ulog.setOpTable(QuotaDaoImpl.TABLENAME);
+		ulog.setOpType(OpType.ADD);
+		ulog.setChangeUser(userId);
+		userLogDao.save(ulog);
+		
 		return true;
 	}
 
 	@Override
 	public void updateQuota(int userId, int opUser, int value, String quotaName) {
 		quotaDao.updateQuota(value, opUser, userId,quotaName);
+		
+		UserLog ulog = new UserLog();
+		ulog.setOpUser(opUser);
+		ulog.setChangeInfo(quotaName+":"+value);
+		ulog.setOpTable(QuotaDaoImpl.TABLENAME);
+		ulog.setOpType(OpType.UPDATE);
+		ulog.setChangeUser(userId);
+		userLogDao.save(ulog);
 	}
 
 	@Override

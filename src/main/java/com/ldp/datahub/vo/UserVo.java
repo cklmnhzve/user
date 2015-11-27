@@ -2,12 +2,19 @@ package com.ldp.datahub.vo;
 
 public class UserVo {
 	
+	private int userId;
 	private String nickName;
 	private String userName;
 	private String comment;
 	private int userType;
 	private int userStatus;
 	
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
 	public int getUserStatus() {
 		return userStatus;
 	}
