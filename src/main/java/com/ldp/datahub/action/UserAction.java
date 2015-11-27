@@ -212,14 +212,10 @@ public class UserAction extends BaseAction
 				}
 				if(type==Constant.UserType.ADMIN){
 					//管理员
-					Object types = requestJson.get("usertype");
 					Object status = requestJson.get("userstatus");
 					Object username = requestJson.get("username");
 					Object destoryed =  requestJson.get("destoryed");
 					
-					if(types!=null&&StringUtils.isNotEmpty(types.toString())){
-						user.setUserType(Integer.parseInt(types.toString()));
-					}
 					if(status!=null&&StringUtils.isNotEmpty(status.toString())){
 						user.setUserStatus(Integer.parseInt(status.toString()));
 					}
