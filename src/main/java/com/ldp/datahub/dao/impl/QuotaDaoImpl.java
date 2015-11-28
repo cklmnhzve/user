@@ -102,7 +102,7 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_USER_QUOTA' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				return false;
 			}
 		}

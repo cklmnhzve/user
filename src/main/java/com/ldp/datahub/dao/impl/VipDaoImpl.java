@@ -55,15 +55,16 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_VIP' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				createTable();
 				initData();
 			}
 		}
 		createdTable = true;
 	}
-	
-	private void insert(Vip vip){
+	@Override
+	public void insert(Vip vip){
+		checkAndCreateTable();
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DH_VIP (USER_TYPE,NAME,VALUE,UNIT,STATUS,OP_TIME,OP_USER)");
 		sql.append(" VALUES(?,?,?,?,?,?,?)");
@@ -139,6 +140,15 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota4);
 		insert(quota5);
 		insert(quota6);
+	}
+
+
+	@Override
+	public void delete(int type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_VIP WHERE USER_TYPE=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{type});
+		
 	}
 
 }

@@ -13,4 +13,8 @@ public interface VipDao {
 	 */
 	public List<Vip> getVipQuota(int type);
 
+	void insert(Vip vip);
+	
+	void delete(int type);
+
 }
