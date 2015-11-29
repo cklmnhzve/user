@@ -1,4 +1,4 @@
-package com.ldp.datahub;
+package com.ldp.datahub.dao;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -14,7 +14,8 @@ import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.entity.Quota;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration("classpath:/applicationContext.xml") 
+//@ContextConfiguration("classpath:/applicationContext.xml") 
+@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
 public class QuotaDaoTest {
 	
 	@Autowired

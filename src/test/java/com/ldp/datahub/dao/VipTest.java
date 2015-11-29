@@ -1,4 +1,4 @@
-package com.ldp.datahub;
+package com.ldp.datahub.dao;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import com.ldp.datahub.dao.VipDao;
 import com.ldp.datahub.entity.Vip;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration("classpath:/applicationContext.xml") 
+@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
 public class VipTest {
 	
 	@Autowired
