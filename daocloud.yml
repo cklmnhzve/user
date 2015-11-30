@@ -2,7 +2,7 @@ image: daocloud/ci-java:oraclejdk7
 services: 
  - mysql
 env: 
- - MYSQL_PORT_3306_TCP_ADDR=tcp://10.1.235.98:3306
+ - MYSQL_PORT_3306_TCP_ADDR=$MYSQL_PORT_3306_TCP_ADDR
  - MYSQL_PORT_3306_TCP_PORT=3306
 before_script: 
  - mkdir -p /usr/src/datahub_user 
