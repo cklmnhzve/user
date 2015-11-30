@@ -1,6 +1,6 @@
 image: daocloud/ci-java:oraclejdk7 
  services: 
- - mysqldb
+ - mysql
  env: 
  - SERVICE_NAME=datahub_user 
  before_script: 
