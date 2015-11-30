@@ -57,6 +57,7 @@ public class VipServiceImpl implements VipService
 					vo.setFee(vip.getValue());
 				}
 			}
+			vo.setUserType(userType);
 			return vo;
 		} catch (Exception e) {
 			return null;

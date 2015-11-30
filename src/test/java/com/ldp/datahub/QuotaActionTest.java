@@ -41,7 +41,9 @@ public class QuotaActionTest {
 	
 	private MockMvc mockMvc; 
 	private static String loginName="test@asiainfo.com";
+	private static String adminUser = "datahubtest@asiainfo.com";
 	private static int userId;
+	private static int adminId;
 	@Before
 	public void setUp() throws Exception {
 		// 绑定需要测试的Controller到MockMvcshang
@@ -52,6 +54,14 @@ public class QuotaActionTest {
 		user.setLoginPasswd("asdfg");
 		userId = userDao.insertUser(user);
 		
+		String pwd="1111111";
+		User user1  = new User();
+		user1.setLoginName(adminUser);
+		user1.setLoginPasswd(pwd);
+		user1.setUserStatus(2);
+		user1.setUserType(2);
+		adminId = userDao.insertUser(user1);
+		
 	}
 	
 	@After
@@ -59,6 +69,8 @@ public class QuotaActionTest {
 		quotaDao.delete(userId);
 		userLogDao.delete(userId);
 		userDao.delete(userId);
+		
+		userDao.delete(adminId);
 	}
 	
 	@Test
@@ -73,9 +85,8 @@ public class QuotaActionTest {
 		JSONObject json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_login_code,json.get("code"));
 		
-		String admin="datahub@asiainfo.com";
 		result = mockMvc.perform(MockMvcRequestBuilders.post("/quota/"+loginName+"/deposit")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -97,7 +108,7 @@ public class QuotaActionTest {
 		//测试修改depo
 		jsonRequset = "{\"quota\":\"300\"}";
 		result = mockMvc.perform(MockMvcRequestBuilders.put("/quota/"+loginName+"/deposit")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -131,9 +142,8 @@ public class QuotaActionTest {
 		JSONObject json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_login_code,json.get("code"));
 		
-		String admin="datahub@asiainfo.com";
 		result = mockMvc.perform(MockMvcRequestBuilders.post("/quota/"+loginName+"/repository")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -157,7 +167,7 @@ public class QuotaActionTest {
 		//测试修改repo配额
 		jsonRequset = "{\"private\":\"200\",\"public\":\"100\"}";
 		result = mockMvc.perform(MockMvcRequestBuilders.put("/quota/"+loginName+"/repository")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -181,7 +191,7 @@ public class QuotaActionTest {
 		//测试修改使用量
 		jsonRequset = "{\"private\":\"1\",\"public\":\"1\"}";
 		result = mockMvc.perform(MockMvcRequestBuilders.post("/quota/"+loginName+"/repository/use")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -214,9 +224,8 @@ public class QuotaActionTest {
 		JSONObject json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_login_code,json.get("code"));
 		
-		String admin="datahub@asiainfo.com";
 		result = mockMvc.perform(MockMvcRequestBuilders.post("/quota/"+loginName+"/pullnum")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -238,7 +247,7 @@ public class QuotaActionTest {
 		//测试修改Pull量
 		jsonRequset = "{\"quota\":\"4000\"}";
 		result = mockMvc.perform(MockMvcRequestBuilders.put("/quota/"+loginName+"/pullnum")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();
@@ -260,7 +269,7 @@ public class QuotaActionTest {
 		//测试修改使用量
 		jsonRequset = "{\"use\":\"1\"}";
 		result = mockMvc.perform(MockMvcRequestBuilders.post("/quota/"+loginName+"/pullnum/use")
-				.header("user", admin)
+				.header("user", adminUser)
 				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes())).andReturn();

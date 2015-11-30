@@ -40,10 +40,13 @@ public class UserActionTest {
 	private UserLogDao userLogDao;
 	
 	private static String loginName="test@asiainfo.com";
+	private static String adminUser = "datahubtest@asiainfo.com";
 	
 	private static String pwd = "abcdefg";
 	
 	private static int userId;
+	
+	private static int adminId;
 
 	@Before
 	public void setUp() throws Exception {
@@ -54,6 +57,14 @@ public class UserActionTest {
 				.andReturn();
 		
 		userId= userDao.getUserId(loginName);
+		
+		String pwd="1111111";
+		User user  = new User();
+		user.setLoginName(adminUser);
+		user.setLoginPasswd(pwd);
+		user.setUserStatus(2);
+		user.setUserType(2);
+		adminId = userDao.insertUser(user);
 	}
 	
 	@After
@@ -61,6 +72,8 @@ public class UserActionTest {
 		quotaDao.delete(userId);
 		userLogDao.delete(userId);
 		userDao.delete(userId);
+		
+		userDao.delete(adminId);
 	}
 	
 	@Test
@@ -113,8 +126,7 @@ public class UserActionTest {
 		json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_auth_code,json.get("code"));
 		
-		String admin="datahub@asiainfo.com";
-		result =mockMvc.perform(MockMvcRequestBuilders.put("/users/"+loginName+"/active").header("user", admin))
+		result =mockMvc.perform(MockMvcRequestBuilders.put("/users/"+loginName+"/active").header("user", adminUser))
 	            .andReturn();
 		rs =result.getResponse().getContentAsString();
 		json = JSONObject.fromObject(rs);
@@ -160,9 +172,8 @@ public class UserActionTest {
 		JSONObject json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_login_code,json.get("code"));
 		
-	   String admin="datahub@asiainfo.com";
 	   result =mockMvc.perform(MockMvcRequestBuilders.put("/users/"+loginName)
-			   .header("user", admin)
+			   .header("user", adminUser)
 			   .characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(jsonRequset.getBytes()))
@@ -185,9 +196,8 @@ public class UserActionTest {
 		JSONObject json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.no_auth_code,json.get("code"));
 		
-	   String admin="datahub@asiainfo.com";
 	   result =mockMvc.perform(MockMvcRequestBuilders.delete("/users/"+loginName)
-			   .header("user", admin)
+			   .header("user", adminUser)
 			   .contentType(MediaType.APPLICATION_JSON))
 	            .andReturn();
 		rs =result.getResponse().getContentAsString();
