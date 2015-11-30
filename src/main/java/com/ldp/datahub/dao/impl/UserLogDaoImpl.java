@@ -63,4 +63,13 @@ public class UserLogDaoImpl extends BaseJdbcDao implements UserLogDao {
 		getJdbcTemplate().execute(alterSql);
 	}
 
+
+	@Override
+	public void delete(int changeId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER_LOG WHERE CHANGE_USER=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{changeId});
+		
+	}
+
 }

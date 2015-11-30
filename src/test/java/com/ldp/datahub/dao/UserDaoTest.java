@@ -16,8 +16,8 @@ import com.ldp.datahub.entity.User;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
-
+//@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
+@ContextConfiguration("classpath:/applicationContext.xml") 
 public class UserDaoTest {
 	
 	@Autowired

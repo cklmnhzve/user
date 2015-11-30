@@ -14,8 +14,8 @@ import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.entity.Quota;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-//@ContextConfiguration("classpath:/applicationContext.xml") 
-@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
+@ContextConfiguration("classpath:/applicationContext.xml") 
+//@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
 public class QuotaDaoTest {
 	
 	@Autowired

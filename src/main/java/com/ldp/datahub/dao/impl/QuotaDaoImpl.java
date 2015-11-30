@@ -116,5 +116,12 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		getJdbcTemplate().update(sql.toString(),new Object[]{userId,quotaName});
 		
 	}
+	
+	@Override
+	public void delete(int userId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER_QUOTA WHERE USER_ID=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{userId});
+	}
 
 }

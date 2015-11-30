@@ -23,4 +23,6 @@ public interface QuotaDao {
 	
 	public void delete(int userId,String quotaName);
 
+	void delete(int userId);
+
 }

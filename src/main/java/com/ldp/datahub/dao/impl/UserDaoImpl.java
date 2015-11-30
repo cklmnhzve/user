@@ -74,6 +74,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 	}
 	
 	@Override
+	public int getStatus(String loginName){
+		checkAndCreateTable();
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT USER_STATUS FROM DH_USER WHERE LOGIN_NAME=? ");
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, Integer.class);
+	}
+	
+	@Override
 	public void delete(int id){
 		
 		StringBuilder sql = new StringBuilder();

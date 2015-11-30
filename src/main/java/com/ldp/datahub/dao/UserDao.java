@@ -36,6 +36,8 @@ public interface UserDao
 	String getPwd(String loginName);
 	
 	int getUserId(String loginName);
+
+	int getStatus(String loginName);
 	
 	
 
