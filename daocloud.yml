@@ -3,7 +3,10 @@ services:
  - mysql
 env: 
  - MYSQL_PORT_3306_TCP_ADDR=$MYSQL_PORT_3306_TCP_ADDR
- - MYSQL_PORT_3306_TCP_PORT=3306 
+ - MYSQL_PORT_3306_TCP_PORT=$MYSQL_PORT_3306_TCP_PORT
+ - MYSQL_ENV_MYSQL_DATABASE=$MYSQL_ENV_MYSQL_DATABASE
+ - MYSQL_ENV_MYSQL_USER=$MYSQL_ENV_MYSQL_USER
+ - MYSQL_ENV_MYSQL_PASSWORD=$MYSQL_ENV_MYSQL_PASSWORD
 before_script: 
  - mkdir -p /usr/src/datahub_user 
  - git clone -b release/v0.4 https://github.com/cherry4477/datahub_user "/usr/src/datahub_user" 
