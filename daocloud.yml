@@ -2,7 +2,8 @@ image: daocloud/ci-java:oraclejdk7
 services: 
  - mysql
 env: 
- - SERVICE_NAME=datahub_user 
+ - MYSQL_PORT_3306_TCP_ADDR=$MYSQL_PORT_3306_TCP_ADDR
+ - MYSQL_PORT_3306_TCP_PORT=3306 
 before_script: 
  - mkdir -p /usr/src/datahub_user 
  - git clone -b release/v0.4 https://github.com/cherry4477/datahub_user "/usr/src/datahub_user" 
