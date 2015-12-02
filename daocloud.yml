@@ -11,13 +11,13 @@ before_script:
  - git clone -b release/v0.5 https://github.com/asiainfoLDP/datahub_user "/usr/src/datahub_user" 
  - wget http://apache.fayea.com/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz && tar -xzf apache-maven-3.3.3-bin.tar.gz -C /usr/local 
  - cd /usr/local && ln -s apache-maven-3.3.3 maven
- - echo $MYSQL_PORT_3306_TCP_ADDR
  - sed  -i 's/^jdbc.url=.*$/jdbc.url=jdbc:mysql:\/\/'$MYSQL_PORT_3306_TCP_ADDR':'$MYSQL_PORT_3306_TCP_PORT'\/'$MYSQL_INSTANCE_NAME' /g' /usr/src/datahub_user/src/test/resources/config.properties
- - sed  -i  's/^jdbc.username=.*$/jdbc.username='$MYSQL_USERNAME'/g' /usr/src/datahub_user/src/test/resources/config.properties
+ - sed  -i 's/^jdbc.username=.*$/jdbc.username='$MYSQL_USERNAME'/g' /usr/src/datahub_user/src/test/resources/config.properties
  - sed  -i 's/^jdbc.password=.*$/jdbc.password='$MYSQL_PASSWORD'/g' /usr/src/datahub_user/src/test/resources/config.properties
- - cat /usr/src/datahub_user/src/test/resources/config.properties
+ - sed  -i 's/^value="${jdbc.url}=.*$/value="jdbc:mysql:\/\/'$MYSQL_PORT_3306_TCP_ADDR':'$MYSQL_PORT_3306_TCP_PORT'\/'$MYSQL_INSTANCE_NAME'" /g' /usr/src/datahub_user/src/test/resources/applicationContext.xml
+ - sed  -i 's/^value="${jdbc.username}=.*$/value="$MYSQL_USERNAME"/g' /usr/src/datahub_user/src/test/resources/applicationContext.xml
+ - sed  -i 's/^value="${jdbc.password}=.*$/value="$MYSQL_ENV_MYSQL_PASSWORD"/g' /usr/src/datahub_user/src/test/resources/applicationContext.xml
  - cat /usr/src/datahub_user/src/test/resources/applicationContext.xml
-
 script: 
  - export MAVEN_HOME=/usr/local/maven 
  - export PATH=${MAVEN_HOME}/bin:${PATH} 
