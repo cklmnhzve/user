@@ -15,6 +15,7 @@ before_script:
  - cat /usr/src/datahub_user/src/test/resources/config.properties
  - echo "MYSQL_PORT_3306_TCP_ADDR"
  - sed  -i 's/^jdbc.url=.*$/jdbc.url=jdbc:mysql:\/\/'$MYSQL_PORT_3306_TCP_ADDR':'$MYSQL_PORT_3306_TCP_PORT'\/'$MYSQL_ENV_MYSQL_DATABASE' /g' /usr/src/datahub_user/src/test/resources/config.properties
+ - echo $?
  - sed -i  's/^jdbc.username=.*$/jdbc.username='$MYSQL_ENV_MYSQL_USER'/g' /usr/src/datahub_user/src/test/resources/config.properties
  - sed  -i 's/^jdbc.password=.*$/jdbc.password='$MYSQL_ENV_MYSQL_PASSWORD'/g' /usr/src/datahub_user/src/test/resources/config.properties
 script: 
