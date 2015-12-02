@@ -1,5 +1,10 @@
 package com.ldp.datahub;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -130,5 +135,15 @@ public class VipActionTest {
 		Assert.assertEquals(5,data.getInt("repoPri"));
 		Assert.assertEquals(20,data.getInt("repoPub"));
 		Assert.assertEquals(4,data.getInt("userType"));
+	}
+	
+	public static void main(String[] args) {
+		List<User> user = new ArrayList<User>();
+		Map<String, Object> jsonMap = new HashMap<String, Object>();
+		user.add(new User());
+		user.add(new User());
+		jsonMap.put("data", user);
+		String json = JSONObject.fromObject(jsonMap).toString();
+		System.err.println(json);
 	}
 }
