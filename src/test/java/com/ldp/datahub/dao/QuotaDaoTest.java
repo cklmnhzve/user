@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
 //@ContextConfiguration("classpath:/applicationContext.xml") 
-@ContextConfiguration("classpath:/applicationContext.xml") 
+@ContextConfiguration("file:src/test/resources/applicationContext.xml") 
 public class QuotaDaoTest extends TestCase{
 	
 	@Autowired
