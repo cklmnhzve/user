@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.entity.Quota;
 
+import junit.framework.TestCase;
+
 @RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration("classpath:/applicationContext.xml") 
-//@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
-public class QuotaDaoTest {
+//@ContextConfiguration("classpath:/applicationContext.xml") 
+@ContextConfiguration("file:src/test/resources/applicationContext.xml") 
+public class QuotaDaoTest extends TestCase{
 	
 	@Autowired
 	private QuotaDao quotaDao;
