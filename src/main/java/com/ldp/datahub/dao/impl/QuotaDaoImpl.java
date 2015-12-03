@@ -68,7 +68,7 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE DH_USER_QUOTA ");
-		sql.append("SET USE_VALUE=USE_VALUE+? ");
+		sql.append("SET USE_VALUE=? ");
 		sql.append("WHERE USER_ID=? AND QUOTA_NAME=? ");
 		
 		Object[] param = new Object[]{add,user,quotaName};
