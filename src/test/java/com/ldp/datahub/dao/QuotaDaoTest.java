@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
 //@ContextConfiguration("classpath:/applicationContext.xml") 
-@ContextConfiguration("file:src/test/resources/applicationContext.xml") 
+@ContextConfiguration("classpath:/applicationContext.xml") 
 public class QuotaDaoTest extends TestCase{
 	
 	@Autowired
@@ -68,7 +68,7 @@ public class QuotaDaoTest extends TestCase{
 			int add=10;
 			quotaDao.updateQuotaUse(add, target.getUserId(), target.getQuotaName());
 			Quota actual = quotaDao.getQuota(target.getUserId(), target.getQuotaName());
-			Assert.assertEquals(target.getUseValue()+add, actual.getUseValue());
+			Assert.assertEquals(add, actual.getUseValue());
 			
 		}finally {
 			quotaDao.delete(target.getUserId(), target.getQuotaName());

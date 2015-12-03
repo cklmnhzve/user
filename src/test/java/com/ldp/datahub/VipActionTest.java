@@ -30,7 +30,7 @@ import com.ldp.datahub.entity.User;
 import net.sf.json.JSONObject;
 
 @WebAppConfiguration
-@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/springMVC-servlet.xml", "file:src/test/resources/applicationContext.xml" })
+@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/springMVC-servlet.xml", "classpath:/applicationContext.xml" })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class VipActionTest {
 

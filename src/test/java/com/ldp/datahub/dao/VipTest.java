@@ -14,7 +14,7 @@ import com.ldp.datahub.entity.Vip;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
 //@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
-@ContextConfiguration("file:src/test/resources/applicationContext.xml") 
+@ContextConfiguration("classpath:/applicationContext.xml") 
 public class VipTest {
 	
 	@Autowired
