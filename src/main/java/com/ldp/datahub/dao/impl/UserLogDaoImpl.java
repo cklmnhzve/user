@@ -37,7 +37,7 @@ public class UserLogDaoImpl extends BaseJdbcDao implements UserLogDao {
 			getJdbcTemplate().queryForObject(sql.toString(),Long.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_USER_LOG' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				creatTable();
 			}
 		}
