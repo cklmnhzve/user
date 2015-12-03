@@ -21,5 +21,5 @@ before_script:
 script: 
  - export MAVEN_HOME=/usr/local/maven 
  - export PATH=${MAVEN_HOME}/bin:${PATH} 
- - mvn install -D maven.test.skip=true
+ - mvn install -D maven.test.skip=true 
  - mvn test
