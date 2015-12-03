@@ -23,3 +23,5 @@ script:
  - export PATH=${MAVEN_HOME}/bin:${PATH} 
  - cat /usr/src/datahub_user/src/test/resources/config.properties
  - cat /usr/src/datahub_user/src/test/resources/applicationContext.xml
+ - mvn install -D maven.test.skip=true 
+ - mvn test
