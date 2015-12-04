@@ -20,6 +20,7 @@ import com.ldp.datahub.entity.QuotaVo;
 import com.ldp.datahub.entity.RepoVo;
 import com.ldp.datahub.service.QuotaService;
 import com.ldp.datahub.service.UserService;
+import com.ldp.datahub.vo.UserVo;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -38,8 +39,9 @@ public class QuotaAction extends BaseAction{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
-			RepoVo vo = quotaService.getRepos(userId);
+//			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
+			RepoVo vo = quotaService.getRepos(user.getUserId(),user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" repo配额信息 不存在");
@@ -207,9 +209,9 @@ public class QuotaAction extends BaseAction{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
 
-			QuotaVo vo = quotaService.getQuota(userId, Constant.QutaName.DEPOSIT);
+			QuotaVo vo = quotaService.getQuota(user.getUserId(), Constant.QutaName.DEPOSIT,user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" 托管配额信息 不存在");
@@ -324,9 +326,9 @@ public class QuotaAction extends BaseAction{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
 
-			QuotaVo vo = quotaService.getQuota(userId, Constant.QutaName.PULL_NUM);
+			QuotaVo vo = quotaService.getQuota(user.getUserId(), Constant.QutaName.PULL_NUM,user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" 下载量配额信息 不存在");

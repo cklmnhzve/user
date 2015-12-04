@@ -1,6 +1,7 @@
 package com.ldp.datahub.service.impl;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +12,13 @@ import com.ldp.datahub.common.Constant.OpType;
 import com.ldp.datahub.common.Constant.QutaName;
 import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.dao.UserLogDao;
+import com.ldp.datahub.dao.VipDao;
 import com.ldp.datahub.dao.impl.QuotaDaoImpl;
 import com.ldp.datahub.entity.Quota;
 import com.ldp.datahub.entity.QuotaVo;
 import com.ldp.datahub.entity.RepoVo;
 import com.ldp.datahub.entity.UserLog;
+import com.ldp.datahub.entity.Vip;
 import com.ldp.datahub.service.QuotaService;
 
 @Service
@@ -25,33 +28,44 @@ public class QuotaServiceImpl implements QuotaService {
 	private QuotaDao quotaDao;
 	@Autowired
 	private UserLogDao userLogDao;
+	@Autowired
+	private VipDao vipDao;
 
 	@Override
-	public RepoVo getRepos(int userId) {
+	public RepoVo getRepos(int userId,int userType) {
 		RepoVo vo = new RepoVo();
-		QuotaVo qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC);
-		if(qvo!=null){
-			vo.setQuotaPublic(qvo.getQuota());
-			vo.setUsePublic(qvo.getUse());
-		}
+		QuotaVo qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC,userType);
+		vo.setQuotaPublic(qvo.getQuota());
+		vo.setUsePublic(qvo.getUse());
 		
-		QuotaVo qvo1 = getQuota(userId, Constant.QutaName.REPO_PRIVATE); 
-		if(qvo1!=null){
-			vo.setQuotaPrivate(qvo1.getQuota());
-			vo.setUsePrivate(qvo1.getUse());
-		}
+		qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC,userType);
+		vo.setQuotaPublic(qvo.getQuota());
+		vo.setUsePublic(qvo.getUse());
 		
-		if(qvo==null||qvo1==null){
-			return null;
-		}
+		QuotaVo qvo1 = getQuota(userId, Constant.QutaName.REPO_PRIVATE,userType); 
+		vo.setQuotaPrivate(qvo1.getQuota());
+		vo.setUsePrivate(qvo1.getUse());
+		
 		return vo;
 	}
 	
+	
 	@Override
-	public QuotaVo getQuota(int userId,String qutaName){
+	public QuotaVo getQuota(int userId,String qutaName,int userType){
 		Quota quota = quotaDao.getQuota(userId, qutaName);
 		if(quota==null){
-			return null;
+			List<Vip> vips = vipDao.getVipQuota(userType);
+			for(Vip vip:vips){
+				Quota q = new Quota();
+				q.setOpUser(-1);
+				q.setQuotaName(vip.getName());
+				q.setUnit(vip.getUnit());
+				q.setQuotaValue(vip.getValue());
+				q.setUserId(userId);
+				q.setUseValue(0);
+				quotaDao.saveQuota(q);
+			}
+			quota = quotaDao.getQuota(userId, qutaName);
 		}
 		QuotaVo vo = new QuotaVo();
 		vo.setQuota(quota.getQuotaValue()+quota.getUnit());

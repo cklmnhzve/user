@@ -39,6 +39,5 @@ public interface UserDao
 
 	int getStatus(String loginName);
 	
-	
 
 }

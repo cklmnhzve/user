@@ -5,7 +5,7 @@ import com.ldp.datahub.entity.RepoVo;
 
 public interface QuotaService {
 
-	public RepoVo getRepos(int userId);
+	public RepoVo getRepos(int userId,int usertype);
 	
 	public boolean saveRepo(int userId,int opUser,int privateRepo,int publicRepo);
 	
@@ -13,7 +13,7 @@ public interface QuotaService {
 	
 	public void updateRepoUse(int userId,Integer privateRepo,Integer publicRepo);
 
-	public QuotaVo getQuota(int userId, String qutaName);
+	public QuotaVo getQuota(int userId, String qutaName,int userType);
 	
 	public boolean saveQuota(int userId, int opUser, int value, String quotaName,String unit);
 	
