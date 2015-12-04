@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.ldp.datahub.common.Constant.QutaName;
 import com.ldp.datahub.dao.BaseJdbcDao;
 import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.entity.Quota;
@@ -68,13 +69,29 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE DH_USER_QUOTA ");
-		sql.append("SET USE_VALUE=? ");
+		sql.append("SET USE_VALUE=?,OP_TIME=? ");
 		sql.append("WHERE USER_ID=? AND QUOTA_NAME=? ");
 		
-		Object[] param = new Object[]{add,user,quotaName};
+		Object[] param = new Object[]{add,new Timestamp(System.currentTimeMillis()),user,quotaName};
 		
 		getJdbcTemplate().update(sql.toString(), param);
 		
+	}
+	
+	@Override
+	public void updatePullUse(int use,int user) {
+		if(!createdTable&&!isExistTable()){
+			creatTable();
+		}
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DH_USER_QUOTA ");
+		sql.append("SET USE_VALUE=USE_VALUE+?,OP_TIME=? ");
+		sql.append("WHERE USER_ID=? AND QUOTA_NAME=? ");
+		
+		Object[] param = new Object[]{use,new Timestamp(System.currentTimeMillis()),user,QutaName.PULL_NUM};
+		
+		getJdbcTemplate().update(sql.toString(), param);
 		
 	}
 	
@@ -122,6 +139,22 @@ public class QuotaDaoImpl extends BaseJdbcDao implements QuotaDao {
 		StringBuilder sql = new StringBuilder();
 		sql.append("DELETE FROM DH_USER_QUOTA WHERE USER_ID=?");
 		getJdbcTemplate().update(sql.toString(),new Object[]{userId});
+	}
+	@Override
+	public void cleanUse(int user, String quotaName) {
+		if(!createdTable&&!isExistTable()){
+			creatTable();
+		}
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("UPDATE DH_USER_QUOTA ");
+		sql.append("SET USE_VALUE=0,OP_TIME=? ");
+		sql.append("WHERE USER_ID=? AND QUOTA_NAME=? ");
+		
+		Object[] param = new Object[]{new Timestamp(System.currentTimeMillis()),user,quotaName};
+		
+		getJdbcTemplate().update(sql.toString(), param);
+		
 	}
 
 }

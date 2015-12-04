@@ -1,6 +1,9 @@
 package com.ldp.datahub.service.impl;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,9 @@ public class QuotaServiceImpl implements QuotaService {
 	@Autowired
 	private VipDao vipDao;
 
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
 	@Override
-	public RepoVo getRepos(int userId,int userType) {
+	public RepoVo getRepos(int userId,int userType) throws ParseException {
 		RepoVo vo = new RepoVo();
 		QuotaVo qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC,userType);
 		vo.setQuotaPublic(qvo.getQuota());
@@ -51,7 +55,7 @@ public class QuotaServiceImpl implements QuotaService {
 	
 	
 	@Override
-	public QuotaVo getQuota(int userId,String qutaName,int userType){
+	public QuotaVo getQuota(int userId,String qutaName,int userType) throws ParseException{
 		Quota quota = quotaDao.getQuota(userId, qutaName);
 		if(quota==null){
 			List<Vip> vips = vipDao.getVipQuota(userType);
@@ -67,6 +71,14 @@ public class QuotaServiceImpl implements QuotaService {
 			}
 			quota = quotaDao.getQuota(userId, qutaName);
 		}
+		if(qutaName.equals(QutaName.PULL_NUM)){
+			long today = formatter.parse(formatter.format(new Date())).getTime();
+			if(quota.getOpTime().getTime()<today){
+				quotaDao.cleanUse(userId, qutaName);
+			}
+			quota.setUseValue(0);
+		}
+		
 		QuotaVo vo = new QuotaVo();
 		vo.setQuota(quota.getQuotaValue()+quota.getUnit());
 		vo.setUse(quota.getUseValue()+quota.getUnit());
@@ -177,8 +189,19 @@ public class QuotaServiceImpl implements QuotaService {
 	}
 
 	@Override
-	public void updateQuotaUse(int userId, int value, String quotaName) {
-		quotaDao.updateQuotaUse(value, userId, quotaName);
+	public void updateQuotaUse(int userId, int value, String quotaName) throws ParseException {
+		if(quotaName.equals(QutaName.PULL_NUM)){
+			long today = formatter.parse(formatter.format(new Date())).getTime();
+			Quota quota = quotaDao.getQuota(userId, quotaName);
+			if(quota.getOpTime().getTime()<today){
+				quotaDao.cleanUse(userId, quotaName);
+			}
+			quotaDao.updatePullUse(value,userId);
+		}else{
+			quotaDao.updateQuotaUse(value, userId, quotaName);
+		}
+		
+		
 	}
 
 }

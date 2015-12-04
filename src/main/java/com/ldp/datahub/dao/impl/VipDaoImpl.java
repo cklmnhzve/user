@@ -103,8 +103,8 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota6);
 		
 		quota1 = new Vip(Constant.QutaName.REPO_PUBLIC, 3, 10, "", Constant.Status.EFFECT, -1);
-		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 3, 1, "", Constant.Status.EFFECT, -1);
-		quota3 = new Vip(Constant.QutaName.DEPOSIT, 3, 0, "M", Constant.Status.EFFECT, -1);
+		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 3, 0, "", Constant.Status.EFFECT, -1);
+		quota3 = new Vip(Constant.QutaName.DEPOSIT, 3, 50, "M", Constant.Status.EFFECT, -1);
 		quota4 = new Vip(Constant.QutaName.PULL_NUM, 3, 1000, "", Constant.Status.EFFECT, -1);
 		quota5 = new Vip(QutaName.PAY_WAY, 3, PayWay.BEFORE, "", Status.EFFECT, -1);
 		quota6 = new Vip(QutaName.FEE, 3, 0, "", Status.EFFECT, -1);
@@ -116,7 +116,7 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota6);
 		
 		quota1 = new Vip(Constant.QutaName.REPO_PUBLIC, 4, 20, "", Constant.Status.EFFECT, -1);
-		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 4, 5, "", Constant.Status.EFFECT, -1);
+		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 4, 2, "", Constant.Status.EFFECT, -1);
 		quota3 = new Vip(Constant.QutaName.DEPOSIT, 4, 200, "M", Constant.Status.EFFECT, -1);
 		quota4 = new Vip(Constant.QutaName.PULL_NUM, 4, 2000, "", Constant.Status.EFFECT, -1);
 		quota5 = new Vip(QutaName.PAY_WAY, 4, PayWay.BEFORE, "", Status.EFFECT, -1);
