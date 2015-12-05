@@ -103,11 +103,11 @@ public class VipActionTest {
 		json = JSONObject.fromObject(rs);
 		Assert.assertEquals(Constant.sucess_code,json.get("code"));
 		JSONObject data = json.getJSONObject("data");
-		Assert.assertEquals("0M",data.getString("deposit"));
+		Assert.assertEquals("50M",data.getString("deposit"));
 		Assert.assertEquals(0,data.getInt("fee"));
 		Assert.assertEquals(1,data.getInt("payWay"));
 		Assert.assertEquals(1000,data.getInt("pullNum"));
-		Assert.assertEquals(1,data.getInt("repoPri"));
+		Assert.assertEquals(0,data.getInt("repoPri"));
 		Assert.assertEquals(10,data.getInt("repoPub"));
 		Assert.assertEquals(3,data.getInt("userType"));
 		
@@ -132,7 +132,7 @@ public class VipActionTest {
 		Assert.assertEquals(10000,data.getInt("fee"));
 		Assert.assertEquals(1,data.getInt("payWay"));
 		Assert.assertEquals(2000,data.getInt("pullNum"));
-		Assert.assertEquals(5,data.getInt("repoPri"));
+		Assert.assertEquals(2,data.getInt("repoPri"));
 		Assert.assertEquals(20,data.getInt("repoPub"));
 		Assert.assertEquals(4,data.getInt("userType"));
 	}
