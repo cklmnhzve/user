@@ -51,7 +51,7 @@ RUN curl -fSL https://s3.cn-north-1.amazonaws.com.cn/complier/jdk.tar.gz -o jdk.
 ADD . ./webapps
 
 RUN cd  ./webapps/ \
-    && mvn  install
+    && mvn  install -D maven.test.skip=true
 
 run cd ./webapps/ \
     && mv ./server.xml /usr/local/tomcat/conf/ \

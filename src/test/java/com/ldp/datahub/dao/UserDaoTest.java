@@ -1,4 +1,4 @@
-package com.ldp.datahub;
+package com.ldp.datahub.dao;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
@@ -16,20 +16,19 @@ import com.ldp.datahub.entity.User;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration("classpath:/applicationContext.xml") 
-
+//@ContextConfiguration("file:src/main/resources/applicationContext.xml") 
+@ContextConfiguration("file:src/test/resources/applicationContext.xml") 
 public class UserDaoTest {
 	
 	@Autowired
-	private UserDao userDao;		private int testID = -1;
-	
+	private UserDao userDao;	
 	private SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
 	@Test
 	public void testGetAndInsert(){
 		
 		User user = makeUser();
-		userDao.insertUser(user);
+		int id =userDao.insertUser(user);
 		
 		try {
 			User actual = userDao.getUser(user.getLoginName());
@@ -43,14 +42,14 @@ public class UserDaoTest {
 			Assert.assertEquals(user.getUserType(), actual.getUserType()); 
 			
 		}finally {
-			userDao.delete(testID);
+			userDao.delete(id);
 		}
 		
 	}	
 	@Test
 	public void testUpdatePwd(){
 		User user = makeUser();
-		userDao.insertUser(user);
+		int id=userDao.insertUser(user);
 		
 		try {
 			String pwd = "abcdef";
@@ -58,22 +57,22 @@ public class UserDaoTest {
 			User actual = userDao.getUser(user.getLoginName());
 			Assert.assertEquals(pwd, actual.getLoginPasswd());
 		} finally {
-			userDao.delete(testID);
+			userDao.delete(id);
 		}
 	}
 		@Test
 	public void testUpdateStatus(){
 		User user = makeUser();
-		userDao.insertUser(user);
+		int id =userDao.insertUser(user);
 		try {			//普通状态修改
 			int newStatus = Constant.userStatus.AUTHORIZE;
 			userDao.updateStatus(user.getLoginName(), newStatus);
-			User actual = userDao.getUser(user.getLoginName());			Assert.assertEquals(newStatus, actual.getUserStatus());			//修改成注销状态			int oldStatus = newStatus;			newStatus = Constant.userStatus.DESTROY;			userDao.updateStatus(user.getLoginName(), newStatus);			actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);
+			User actual = userDao.getUser(user.getLoginName());			Assert.assertEquals(newStatus, actual.getUserStatus());			//修改成注销状态			newStatus = Constant.userStatus.DESTROY;			userDao.updateStatus(user.getLoginName(), newStatus);			actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);
 		} finally {
-			userDao.delete(testID);
+			userDao.delete(id);
 		}
 	}
-		@Test	public void testDelete(){		User user = makeUser();		userDao.insertUser(user);		try {			userDao.delete(user.getLoginName());			User actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);		} finally {			userDao.delete(testID);		}	}
+		@Test	public void testDelete(){		User user = makeUser();		int id=userDao.insertUser(user);		try {			userDao.delete(user.getLoginName());			User actual = userDao.getUser(user.getLoginName());			Assert.assertNull(actual);		} finally {			userDao.delete(id);		}	}
 	
 	private User makeUser(){
 		User user = new User();
@@ -84,8 +83,7 @@ public class UserDaoTest {
 		user.setUserName("测试账号");
 		user.setUserStatus(1);
 		user.setUserType(1);
-		user.setSummary("ceshi");		user.setUserId(testID);
-		return user;
+		user.setSummary("ceshi");		return user;
 	}
 
 }

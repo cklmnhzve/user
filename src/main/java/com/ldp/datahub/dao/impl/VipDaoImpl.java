@@ -55,15 +55,16 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_VIP' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				createTable();
 				initData();
 			}
 		}
 		createdTable = true;
 	}
-	
-	private void insert(Vip vip){
+	@Override
+	public void insert(Vip vip){
+		checkAndCreateTable();
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DH_VIP (USER_TYPE,NAME,VALUE,UNIT,STATUS,OP_TIME,OP_USER)");
 		sql.append(" VALUES(?,?,?,?,?,?,?)");
@@ -102,8 +103,8 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota6);
 		
 		quota1 = new Vip(Constant.QutaName.REPO_PUBLIC, 3, 10, "", Constant.Status.EFFECT, -1);
-		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 3, 1, "", Constant.Status.EFFECT, -1);
-		quota3 = new Vip(Constant.QutaName.DEPOSIT, 3, 0, "M", Constant.Status.EFFECT, -1);
+		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 3, 0, "", Constant.Status.EFFECT, -1);
+		quota3 = new Vip(Constant.QutaName.DEPOSIT, 3, 50, "M", Constant.Status.EFFECT, -1);
 		quota4 = new Vip(Constant.QutaName.PULL_NUM, 3, 1000, "", Constant.Status.EFFECT, -1);
 		quota5 = new Vip(QutaName.PAY_WAY, 3, PayWay.BEFORE, "", Status.EFFECT, -1);
 		quota6 = new Vip(QutaName.FEE, 3, 0, "", Status.EFFECT, -1);
@@ -115,7 +116,7 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota6);
 		
 		quota1 = new Vip(Constant.QutaName.REPO_PUBLIC, 4, 20, "", Constant.Status.EFFECT, -1);
-		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 4, 5, "", Constant.Status.EFFECT, -1);
+		quota2 = new Vip(Constant.QutaName.REPO_PRIVATE, 4, 2, "", Constant.Status.EFFECT, -1);
 		quota3 = new Vip(Constant.QutaName.DEPOSIT, 4, 200, "M", Constant.Status.EFFECT, -1);
 		quota4 = new Vip(Constant.QutaName.PULL_NUM, 4, 2000, "", Constant.Status.EFFECT, -1);
 		quota5 = new Vip(QutaName.PAY_WAY, 4, PayWay.BEFORE, "", Status.EFFECT, -1);
@@ -139,6 +140,15 @@ public class VipDaoImpl extends BaseJdbcDao implements VipDao {
 		insert(quota4);
 		insert(quota5);
 		insert(quota6);
+	}
+
+
+	@Override
+	public void delete(int type) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_VIP WHERE USER_TYPE=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{type});
+		
 	}
 
 }

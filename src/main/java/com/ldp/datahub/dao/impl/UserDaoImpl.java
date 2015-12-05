@@ -39,16 +39,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		checkAndCreateTable();
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME,USER_NAME,SUMMARY");
-		if(user.getUserId()!=0){
-			sql.append(",USER_ID");
-		}
-		sql.append(")");
-		if(user.getUserId()!=0){
-			sql.append(" VALUES(?,?,?,?,?,?,?,?,?)");
-		}else{
-			sql.append(" VALUES(?,?,?,?,?,?,?,?)");
-		}
+		sql.append("INSERT INTO DH_USER (LOGIN_NAME,LOGIN_PASSWD,USER_STATUS,USER_TYPE,NICK_NAME,OP_TIME,USER_NAME,SUMMARY)");
+		sql.append(" VALUES(?,?,?,?,?,?,?,?)");
 		
 		List<Object> param = new ArrayList<Object>();
 		param.add(user.getLoginName());
@@ -59,11 +51,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		param.add(user.getOpTime());
 		param.add(user.getUserName());
 		param.add(user.getSummary());
-		if(user.getUserId()!=0){
-			param.add(user.getUserId());
-		}
-		
 		return save(sql.toString(), param.toArray());
+		
 	}
 	
 	@Override
@@ -82,6 +71,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT LOGIN_PASSWD FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
 		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, String.class);
+	}
+	
+	@Override
+	public int getStatus(String loginName){
+		checkAndCreateTable();
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT USER_STATUS FROM DH_USER WHERE LOGIN_NAME=? ");
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, Integer.class);
 	}
 	
 	@Override
@@ -197,7 +195,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_USER' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				creatTable();
 			}
 		}

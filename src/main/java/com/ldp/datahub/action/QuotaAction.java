@@ -20,6 +20,7 @@ import com.ldp.datahub.entity.QuotaVo;
 import com.ldp.datahub.entity.RepoVo;
 import com.ldp.datahub.service.QuotaService;
 import com.ldp.datahub.service.UserService;
+import com.ldp.datahub.vo.UserVo;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -33,13 +34,14 @@ public class QuotaAction extends BaseAction{
 	
 	private static Log log = LogFactory.getLog(QuotaAction.class);
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.GET)
 	public void getRepo(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
-			RepoVo vo = quotaService.getRepos(userId);
+//			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
+			RepoVo vo = quotaService.getRepos(user.getUserId(),user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" repo配额信息 不存在");
@@ -63,7 +65,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.POST)
 	public void addRepo(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -109,7 +111,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/repository/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository", method = RequestMethod.PUT)
 	public void updateRepoQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -155,7 +157,7 @@ public class QuotaAction extends BaseAction{
 			sendJson(response, json);
 		}
 	}
-	@RequestMapping(value = "/users/{loginName:.*}/repository/use", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/repository/use", method = RequestMethod.POST)
 	public void updateRepoUse(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");
@@ -202,14 +204,14 @@ public class QuotaAction extends BaseAction{
 	
 	
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.GET)
 	public void getDeposit(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
 
-			QuotaVo vo = quotaService.getQuota(userId, Constant.QutaName.DEPOSIT);
+			QuotaVo vo = quotaService.getQuota(user.getUserId(), Constant.QutaName.DEPOSIT,user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" 托管配额信息 不存在");
@@ -233,7 +235,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.POST)
 	public void addDeposit(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -282,7 +284,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/deposit/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/deposit", method = RequestMethod.PUT)
 	public void updateDepositQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -319,14 +321,14 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum", method = RequestMethod.GET)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.GET)
 	public void getPull(@PathVariable String loginName,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
 			
-			int userId = userService.getUserId(loginName);
+			UserVo user = userService.getUser(loginName);
 
-			QuotaVo vo = quotaService.getQuota(userId, Constant.QutaName.PULL_NUM);
+			QuotaVo vo = quotaService.getQuota(user.getUserId(), Constant.QutaName.PULL_NUM,user.getUserType());
 			
 			if(vo==null){
 				log.error(loginName+" 下载量配额信息 不存在");
@@ -349,7 +351,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.POST)
 	public void addPull(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -392,7 +394,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum/quota", method = RequestMethod.PUT)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum", method = RequestMethod.PUT)
 	public void updatePullQuota(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -429,7 +431,7 @@ public class QuotaAction extends BaseAction{
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pullnum/use", method = RequestMethod.POST)
+	@RequestMapping(value = "/quota/{loginName:.*}/pullnum/use", method = RequestMethod.POST)
 	public void updatePullUse(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");

@@ -37,7 +37,7 @@ public class UserLogDaoImpl extends BaseJdbcDao implements UserLogDao {
 			getJdbcTemplate().queryForObject(sql.toString(),Long.class);
 		} catch (Exception e) {
 			String msg = e.getMessage();
-			if(msg.contains("Table 'datahub.DH_USER_LOG' doesn't exist")){
+			if(msg.contains("Table")&&msg.contains("doesn't exist")){
 				creatTable();
 			}
 		}
@@ -61,6 +61,15 @@ public class UserLogDaoImpl extends BaseJdbcDao implements UserLogDao {
 		
 		String alterSql = "ALTER TABLE DH_USER_LOG MODIFY ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT;";
 		getJdbcTemplate().execute(alterSql);
+	}
+
+
+	@Override
+	public void delete(int changeId) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM DH_USER_LOG WHERE CHANGE_USER=?");
+		getJdbcTemplate().update(sql.toString(),new Object[]{changeId});
+		
 	}
 
 }

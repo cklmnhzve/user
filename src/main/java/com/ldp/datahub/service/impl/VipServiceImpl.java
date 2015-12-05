@@ -51,8 +51,13 @@ public class VipServiceImpl implements VipService
 					vo.setDeposit(vip.getValue()+vip.getUnit());
 				}else if(quotaName.equals(QutaName.PULL_NUM)){
 					vo.setPullNum(vip.getValue());
+				}else if(quotaName.equals(QutaName.PAY_WAY)){
+					vo.setPayWay(vip.getValue());
+				}else if(quotaName.equals(QutaName.FEE)){
+					vo.setFee(vip.getValue());
 				}
 			}
+			vo.setUserType(userType);
 			return vo;
 		} catch (Exception e) {
 			return null;

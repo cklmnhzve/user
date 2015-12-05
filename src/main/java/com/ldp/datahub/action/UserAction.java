@@ -270,7 +270,7 @@ public class UserAction extends BaseAction
 	 */
 	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response)
+	public void deleteUser(@PathVariable String loginName,HttpServletRequest request, HttpServletResponse response)
 	{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {

@@ -1,6 +1,10 @@
 package com.ldp.datahub.service.impl;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +15,13 @@ import com.ldp.datahub.common.Constant.OpType;
 import com.ldp.datahub.common.Constant.QutaName;
 import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.dao.UserLogDao;
+import com.ldp.datahub.dao.VipDao;
 import com.ldp.datahub.dao.impl.QuotaDaoImpl;
 import com.ldp.datahub.entity.Quota;
 import com.ldp.datahub.entity.QuotaVo;
 import com.ldp.datahub.entity.RepoVo;
 import com.ldp.datahub.entity.UserLog;
+import com.ldp.datahub.entity.Vip;
 import com.ldp.datahub.service.QuotaService;
 
 @Service
@@ -25,34 +31,55 @@ public class QuotaServiceImpl implements QuotaService {
 	private QuotaDao quotaDao;
 	@Autowired
 	private UserLogDao userLogDao;
+	@Autowired
+	private VipDao vipDao;
 
+	private static SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
 	@Override
-	public RepoVo getRepos(int userId) {
+	public RepoVo getRepos(int userId,int userType) throws ParseException {
 		RepoVo vo = new RepoVo();
-		QuotaVo qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC);
-		if(qvo!=null){
-			vo.setQuotaPublic(qvo.getQuota());
-			vo.setUsePublic(qvo.getUse());
-		}
+		QuotaVo qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC,userType);
+		vo.setQuotaPublic(qvo.getQuota());
+		vo.setUsePublic(qvo.getUse());
 		
-		QuotaVo qvo1 = getQuota(userId, Constant.QutaName.REPO_PRIVATE); 
-		if(qvo1!=null){
-			vo.setQuotaPrivate(qvo1.getQuota());
-			vo.setUsePrivate(qvo1.getUse());
-		}
+		qvo = getQuota(userId, Constant.QutaName.REPO_PUBLIC,userType);
+		vo.setQuotaPublic(qvo.getQuota());
+		vo.setUsePublic(qvo.getUse());
 		
-		if(qvo==null||qvo1==null){
-			return null;
-		}
+		QuotaVo qvo1 = getQuota(userId, Constant.QutaName.REPO_PRIVATE,userType); 
+		vo.setQuotaPrivate(qvo1.getQuota());
+		vo.setUsePrivate(qvo1.getUse());
+		
 		return vo;
 	}
 	
+	
 	@Override
-	public QuotaVo getQuota(int userId,String qutaName){
+	public QuotaVo getQuota(int userId,String qutaName,int userType) throws ParseException{
 		Quota quota = quotaDao.getQuota(userId, qutaName);
 		if(quota==null){
-			return null;
+			List<Vip> vips = vipDao.getVipQuota(userType);
+			for(Vip vip:vips){
+				Quota q = new Quota();
+				q.setOpUser(-1);
+				q.setQuotaName(vip.getName());
+				q.setUnit(vip.getUnit());
+				q.setQuotaValue(vip.getValue());
+				q.setUserId(userId);
+				q.setUseValue(0);
+				quotaDao.saveQuota(q);
+			}
+			quota = quotaDao.getQuota(userId, qutaName);
 		}
+		if(qutaName.equals(QutaName.PULL_NUM)){
+			long today = formatter.parse(formatter.format(new Date())).getTime();
+			if(quota.getOpTime().getTime()<today){
+				quotaDao.cleanUse(userId, qutaName);
+				quota.setUseValue(0);
+			}
+			
+		}
+		
 		QuotaVo vo = new QuotaVo();
 		vo.setQuota(quota.getQuotaValue()+quota.getUnit());
 		vo.setUse(quota.getUseValue()+quota.getUnit());
@@ -163,8 +190,19 @@ public class QuotaServiceImpl implements QuotaService {
 	}
 
 	@Override
-	public void updateQuotaUse(int userId, int value, String quotaName) {
-		quotaDao.updateQuotaUse(value, userId, quotaName);
+	public void updateQuotaUse(int userId, int value, String quotaName) throws ParseException {
+		if(quotaName.equals(QutaName.PULL_NUM)){
+			long today = formatter.parse(formatter.format(new Date())).getTime();
+			Quota quota = quotaDao.getQuota(userId, quotaName);
+			if(quota.getOpTime().getTime()<today){
+				quotaDao.cleanUse(userId, quotaName);
+			}
+			quotaDao.updatePullUse(value,userId);
+		}else{
+			quotaDao.updateQuotaUse(value, userId, quotaName);
+		}
+		
+		
 	}
 
 }

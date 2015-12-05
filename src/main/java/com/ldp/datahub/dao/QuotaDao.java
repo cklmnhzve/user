@@ -21,6 +21,12 @@ public interface QuotaDao {
 	 */
 	public void updateQuotaUse(int add,int user,String quotaName );
 	
+	public void cleanUse(int user,String quotaName);
+	
 	public void delete(int userId,String quotaName);
+
+	void delete(int userId);
+
+	void updatePullUse(int use,int user);
 
 }

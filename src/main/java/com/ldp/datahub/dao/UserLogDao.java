@@ -5,4 +5,6 @@ import com.ldp.datahub.entity.UserLog;
 public interface UserLogDao {
 
 	void save(UserLog log);
+	
+	void delete(int changeId);
 }
