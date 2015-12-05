@@ -75,8 +75,9 @@ public class QuotaServiceImpl implements QuotaService {
 			long today = formatter.parse(formatter.format(new Date())).getTime();
 			if(quota.getOpTime().getTime()<today){
 				quotaDao.cleanUse(userId, qutaName);
+				quota.setUseValue(0);
 			}
-			quota.setUseValue(0);
+			
 		}
 		
 		QuotaVo vo = new QuotaVo();

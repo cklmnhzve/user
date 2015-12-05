@@ -142,7 +142,7 @@ public class UserAction extends BaseAction
 		}
 	}
 	
-	@RequestMapping(value = "/users/{loginName:.*}/pwd", method = RequestMethod.PUT,consumes = "text/json")
+	@RequestMapping(value = "/users/{loginName:.*}/pwd", method = RequestMethod.PUT)
 	public void updatePwd(@PathVariable String loginName, @RequestBody String body,HttpServletRequest request,HttpServletResponse response){
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		try {
@@ -182,7 +182,7 @@ public class UserAction extends BaseAction
 	 * 修改用户,put 方式
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.PUT,consumes = "text/json")
+	@RequestMapping(value = "/users/{loginName:.*}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void updateUser(@PathVariable String loginName,@RequestBody String body,HttpServletRequest request, HttpServletResponse response) throws IOException
 	{
