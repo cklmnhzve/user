@@ -1,6 +1,16 @@
 package com.ldp.datahub.common;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Properties;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ldp.datahub.action.BaseAction;
+
 public class Constant {
+	private static Log log = LogFactory.getLog(Constant.class);
 	
 	public static final int sucess_code=0;
     public static final String sucess = "ok";
@@ -39,6 +49,20 @@ public class Constant {
     
     public static final int exist_quota_code=8006;
     public static final String exist_quota = "quota exist";
+    
+    private static Properties properties = new Properties();
+   	public static String testUser="";
+   	 static{
+   		 try {
+   			 InputStream inStream = BaseAction.class.getClassLoader()
+   						.getResourceAsStream("." + File.separator + "config.properties");
+   			 properties.load(inStream);
+   			testUser = properties.getProperty("testUser");
+   		} catch (Exception e) {
+   			log.error("加载配置文件错误");
+   		}
+   	 }
+   	 
     
     public static class userStatus{
     	public static int NO_ACTIVE=1; //未激活账户

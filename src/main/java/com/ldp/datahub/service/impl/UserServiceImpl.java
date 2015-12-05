@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ldp.datahub.common.Constant;
+import com.ldp.datahub.dao.QuotaDao;
 import com.ldp.datahub.dao.UserDao;
 import com.ldp.datahub.dao.UserLogDao;
 import com.ldp.datahub.dao.impl.UserDaoImpl;
@@ -26,6 +27,8 @@ public class UserServiceImpl implements UserService
 	private QuotaService quotaService;
 	@Autowired
 	private UserLogDao userLogDao;
+	@Autowired
+	private QuotaDao quotaDao;
 	
 	@Override
 	public UserVo getUser(String loginName) 
@@ -140,6 +143,15 @@ public class UserServiceImpl implements UserService
 		userLogDao.save(ulog);
 		
 		userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
+		
+		if(loginName.equals(Constant.testUser)){
+			//测试用户，删除所有测试信息
+			int testID =userDao.getUserId(loginName);
+			userDao.delete(testID);
+			
+			quotaDao.delete(testID);
+			userLogDao.delete(testID);
+		}
 	}
 
 	@Override

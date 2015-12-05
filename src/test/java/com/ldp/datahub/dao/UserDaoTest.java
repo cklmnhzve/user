@@ -42,8 +42,7 @@ public class UserDaoTest {
 			Assert.assertEquals(user.getUserType(), actual.getUserType()); 
 			
 		}finally {
-			userDao.delete(id);
-		}
+			userDao.delete(id);		}
 		
 	}	
 	@Test
