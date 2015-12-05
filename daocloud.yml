@@ -3,12 +3,18 @@ services:
  - mysql
 env: 
  - MYSQL_PORT_3306_TCP_ADDR=$MYSQL_PORT_3306_TCP_ADDR
- - MYSQL_PORT_3306_TCP_PORT=3306
+ - MYSQL_PORT_3306_TCP_PORT=$MYSQL_PORT_3306_TCP_PORT
+ - MYSQL_INSTANCE_NAME = "test"
+ - MYSQL_USERNAME = "root"
 before_script: 
- - mkdir -p /usr/src/datahub_user 
- - git clone -b release/v0.4 https://github.com/cherry4477/datahub_user "/usr/src/datahub_user" 
  - wget http://apache.fayea.com/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz && tar -xzf apache-maven-3.3.3-bin.tar.gz -C /usr/local 
- - cd /usr/local && ln -s apache-maven-3.3.3 maven 
+ - cd /usr/local && ln -s apache-maven-3.3.3 maven
+ - cd /daocloud/builder/src
+ - sed  -i 's/MYSQL_SERVER/'$MYSQL_PORT_3306_TCP_ADDR'/g' ./src/test/resources/config.properties
+ - sed  -i 's/MYSQL_PORT/'$MYSQL_PORT_3306_TCP_PORT'/g' ./src/test/resources/config.properties
+ - sed  -i 's/MYSQL_INSTANCE/'$MYSQL_INSTANCE_NAME'/g' ./src/test/resources/config.properties
+ - sed  -i 's/MYSQL_USER/'$MYSQL_USERNAME'/g' ./src/test/resources/config.properties
+ - sed  -i 's/MYSQL_PASS/'$MYSQL_PASSWORD'/g' ./src/test/resources/config.properties
 script: 
  - export MAVEN_HOME=/usr/local/maven 
  - export PATH=${MAVEN_HOME}/bin:${PATH} 
