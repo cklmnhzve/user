@@ -134,16 +134,6 @@ public class UserServiceImpl implements UserService
 	@Override
 	public void deleteUser(String loginName,int opUser)
 	{
-		UserLog ulog = new UserLog();
-		ulog.setChangeUser(getUserId(loginName));
-		ulog.setChangeInfo("删除");
-		ulog.setOpTable(UserDaoImpl.tableName);
-		ulog.setOpType(Constant.OpType.DELETE);
-		ulog.setOpUser(opUser);
-		userLogDao.save(ulog);
-		
-		userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
-		
 		if(loginName.equals(Constant.testUser)){
 			//测试用户，删除所有测试信息
 			int testID =userDao.getUserId(loginName);
@@ -151,7 +141,18 @@ public class UserServiceImpl implements UserService
 			
 			quotaDao.delete(testID);
 			userLogDao.delete(testID);
+		}else{
+			UserLog ulog = new UserLog();
+			ulog.setChangeUser(getUserId(loginName));
+			ulog.setChangeInfo("删除");
+			ulog.setOpTable(UserDaoImpl.tableName);
+			ulog.setOpType(Constant.OpType.DELETE);
+			ulog.setOpUser(opUser);
+			userLogDao.save(ulog);
+			
+			userDao.updateStatus(loginName, Constant.userStatus.DESTROY);
 		}
+		
 	}
 
 	@Override
