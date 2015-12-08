@@ -78,8 +78,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		checkAndCreateTable();
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT USER_STATUS FROM DH_USER WHERE LOGIN_NAME=? ");
-		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName}, Integer.class);
+		sql.append("SELECT USER_STATUS FROM DH_USER WHERE LOGIN_NAME=? AND USER_STATUS<?");
+		return getJdbcTemplate().queryForObject(sql.toString(), new Object[]{loginName,Constant.userStatus.DESTROY}, Integer.class);
 	}
 	
 	@Override
@@ -95,11 +95,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("UPDATE DH_USER SET USER_STATUS=? WHERE LOGIN_NAME=? AND ");
-		if(status==Constant.userStatus.DESTROY){
-			sql.append(" USER_STATUS!=?");
-		}else {
-			sql.append(" USER_STATUS<?");
-		}
+		sql.append(" USER_STATUS<?");
 		Object[] args = new Object[]{status,loginName,Constant.userStatus.DESTROY};
 		getJdbcTemplate().update(sql.toString(),args);
 		
@@ -146,11 +142,8 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		
 		sql.append(" WHERE LOGIN_NAME=? ");
 		
-		if(user.isDestoryed()){
-			sql.append("AND USER_STATUS=?");
-		}else{
-			sql.append("AND USER_STATUS<?");
-		}
+		sql.append("AND USER_STATUS<?");
+		
 		args.add(user.getLoginName());
 		args.add(Constant.userStatus.DESTROY);
 		

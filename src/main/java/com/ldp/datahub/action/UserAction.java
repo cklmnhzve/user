@@ -115,7 +115,6 @@ public class UserAction extends BaseAction
 			String json = JSONObject.fromObject(jsonMap).toString();
 			sendJson(response, json);
 		}
-		
 	}
 	
 	@RequestMapping(value = "/users/{loginName:.*}/active", method = RequestMethod.PUT)
