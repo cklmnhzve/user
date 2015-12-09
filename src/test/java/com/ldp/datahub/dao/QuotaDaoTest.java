@@ -15,7 +15,6 @@ import com.ldp.datahub.entity.Quota;
 import junit.framework.TestCase;
 
 @RunWith(SpringJUnit4ClassRunner.class)  
-//@ContextConfiguration("classpath:/applicationContext.xml") 
 @ContextConfiguration("file:src/test/resources/applicationContext.xml") 
 public class QuotaDaoTest extends TestCase{
 	
