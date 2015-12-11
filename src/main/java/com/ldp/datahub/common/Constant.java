@@ -27,7 +27,8 @@ public class Constant {
     
     public static final int no_info_code = 1009;
     public static final String no_info = "not found";
-    
+    public static final int server_link_code=1011;
+    public static final String server_link="server link error";
     
     public static final int no_user_code=6002;
     public static final String no_user = "user not registered yet";
@@ -49,6 +50,9 @@ public class Constant {
     
     public static final int exist_quota_code=8006;
     public static final String exist_quota = "quota exist";
+    
+    public static final int no_money_code=8007;
+    public static final String no_money="Sorry, your credit is running low";
     
     private static Properties properties = new Properties();
    	public static String testUser="";
@@ -110,6 +114,12 @@ public class Constant {
     	public static int ADD = 1;
     	public static int UPDATE = 2;
     	public static int DELETE = 3;
+    }
+    
+    public static class RechargeType{
+    	public static int add=1;//充值、收入
+    	public static int decrease = 2;//扣费、消费
+    	public static int vipcost = 3; //年费
     }
   
 }

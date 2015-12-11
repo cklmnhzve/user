@@ -1,9 +1,12 @@
 package com.ldp.datahub.service.impl;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,8 @@ import com.ldp.datahub.entity.User;
 import com.ldp.datahub.entity.UserLog;
 import com.ldp.datahub.entity.Vip;
 import com.ldp.datahub.entity.VipVo;
+import com.ldp.datahub.exception.LinkServerException;
+import com.ldp.datahub.net.RequestUtil;
 import com.ldp.datahub.service.VipService;
 
 @Service
@@ -66,16 +71,8 @@ public class VipServiceImpl implements VipService
 
 	@Override
 	@Transactional
-	public void updateUserType(String loginName, int userType,int opUser) {
+	public boolean updateUserType(String loginName, int userType,int validity,int opUser) throws LinkServerException {
 		User oldUser = userDao.getUser(loginName);
-		if(userType==oldUser.getUserType()){
-			return;
-		}
-		//更新用户表
-		User user = new User();
-		user.setLoginName(loginName);
-		user.setUserType(userType);
-		userDao.updateUser(user);
 		
 		int oldLevel = oldUser.getUserType();
 		List<Vip> oldVip = vipDao.getVipQuota(oldLevel);
@@ -83,44 +80,63 @@ public class VipServiceImpl implements VipService
 		List<Vip> newVips = vipDao.getVipQuota(userType);
 		Map<String,Vip> vipmap = toMap(newVips);
 		
+		Vip vipFee = vipmap.get(QutaName.FEE);
+		int cost = validity*vipFee.getValue();
+		//先扣费
+		boolean recharge = RequestUtil.recharge(loginName, cost);
+		if(!recharge){
+			//余额不足
+			return false;
+		}
+		
 		int userId = oldUser.getUserId();
-		for(Vip old :oldVip){
-			String name = old.getName();
-			Vip newV = vipmap.get(name);
-			if(QutaName.FEE.equals(name)||QutaName.PAY_WAY.equals(name)){
-				continue;
-			}
-			Quota quota = quotaDao.getQuota(userId, name);
-			if(quota==null){
-				Quota q = new Quota();
-				q.setOpUser(opUser);
-				q.setQuotaName(name);
-				q.setUnit(newV.getUnit());
-				q.setQuotaValue(newV.getValue());
-				q.setUserId(userId);
-				q.setUseValue(0);
-				quotaDao.saveQuota(q);
-			}else{
-				int oldValue = old.getValue();
-				int vipValue = newV.getValue();
-				//如果以前是admin，转成会员级别
-				if(oldValue==-1){
-					oldValue=0;
+		if(userType!=oldUser.getUserType()){
+			for(Vip old :oldVip){
+				String name = old.getName();
+				Vip newV = vipmap.get(name);
+				if(QutaName.FEE.equals(name)||QutaName.PAY_WAY.equals(name)){
+					continue;
 				}
-				int newValue=0;
-				//如果是转成会员，资源无限使用
-				if(vipValue==-1){
-					newValue=-1;
+				Quota quota = quotaDao.getQuota(userId, name);
+				if(quota==null){
+					Quota q = new Quota();
+					q.setOpUser(opUser);
+					q.setQuotaName(name);
+					q.setUnit(newV.getUnit());
+					q.setQuotaValue(newV.getValue());
+					q.setUserId(userId);
+					q.setUseValue(0);
+					quotaDao.saveQuota(q);
 				}else{
-					//其他会员级别转换，使用差值控制资源使用配额
-					int add = vipValue-oldValue;
-					int num = quotaDao.getQuota(userId, name).getQuotaValue();
-					newValue = num+add;
+					int oldValue = old.getValue();
+					int vipValue = newV.getValue();
+					//如果以前是admin，转成会员级别
+					if(oldValue==-1){
+						oldValue=0;
+					}
+					int newValue=0;
+					//如果是转成会员，资源无限使用
+					if(vipValue==-1){
+						newValue=-1;
+					}else{
+						//其他会员级别转换，使用差值控制资源使用配额
+						int add = vipValue-oldValue;
+						int num = quotaDao.getQuota(userId, name).getQuotaValue();
+						newValue = num+add;
+					}
+					quotaDao.updateQuota(newValue, opUser, userId, name);
+					updateLog(userId, opUser, name, newValue);
 				}
-				quotaDao.updateQuota(newValue, opUser, userId, name);
-				updateLog(userId, opUser, name, newValue);
 			}
 		}
+		
+		//更新用户表
+		User user = new User();
+		user.setLoginName(loginName);
+		user.setUserType(userType);
+		user.setInvalidTime(new Timestamp(DateUtils.addDays(new Date(), validity).getTime()));
+		userDao.updateUser(user);
+		return true;
 	}
 	
 	private void updateLog(int userId,int opUser,String quotaName,int value){

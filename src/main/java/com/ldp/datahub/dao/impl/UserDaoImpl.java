@@ -1,9 +1,8 @@
 package com.ldp.datahub.dao.impl;
 
-
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -137,8 +136,6 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			sql.append(" USER_TYPE=?,");
 			args.add(user.getUserType());
 		}
-		sql.append(" OP_TIME=?");
-		args.add(new Timestamp(System.currentTimeMillis()));
 		
 		sql.append(" WHERE LOGIN_NAME=? ");
 		
@@ -184,8 +181,15 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		}
 		StringBuilder sql = new StringBuilder();
 		try {
-			sql.append("SELECT USER_ID FROM DH_USER LIMIT 1");
-			getJdbcTemplate().queryForObject(sql.toString(),Integer.class);
+			//检测添加 《有效期》字段
+			sql = new StringBuilder();
+			sql.append("SELECT * FROM DH_USER LIMIT 1");
+			Map<String, Object> map = getJdbcTemplate().queryForMap(sql.toString());
+			if(!map.containsKey("INVALID_TIME")){
+				sql = new StringBuilder();
+				sql.append("ALTER TABLE DH_USER ADD INVALID_TIME TIMESTAMP;");
+				getJdbcTemplate().execute(sql.toString());
+			}
 		} catch (Exception e) {
 			String msg = e.getMessage();
 			if(msg.contains("Table")&&msg.contains("doesn't exist")){
@@ -200,13 +204,14 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 		sql.append("(");
 		sql.append("USER_ID	INT NOT NULL,");
 		sql.append("USER_STATUS	INT NOT NULL,");
-		sql.append("USER_TYPE	INT COMMENT '1-普通；2-管理员',");
-		sql.append("USER_NAME	VARCHAR(64) COMMENT '登录用户名',");
+		sql.append("USER_TYPE	INT COMMENT,");
+		sql.append("USER_NAME	VARCHAR(64),");
 		sql.append("NICK_NAME	VARCHAR(1024),");
 		sql.append("LOGIN_NAME	VARCHAR(64),");
-		sql.append("LOGIN_PASSWD	VARCHAR(1024) COMMENT '密码，需密文存储',");
+		sql.append("LOGIN_PASSWD	VARCHAR(1024),");
 		sql.append("SUMMARY	VARCHAR(1024),");
 		sql.append("OP_TIME	TIMESTAMP,");
+		sql.append("INVALID_TIME TIMESTAMP,");
 		sql.append("PRIMARY KEY (USER_ID)");
 		sql.append(");");
 		getJdbcTemplate().execute(sql.toString());

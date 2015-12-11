@@ -8,10 +8,29 @@ public class UserVo {
 	private String comment;
 	private int userType;
 	private int userStatus;
+	private String registTime;
+	private String invalidTime;
 	
 	public int getUserId() {
 		return userId;
 	}
+	
+	public String getRegistTime() {
+		return registTime;
+	}
+
+	public String getInvalidTime() {
+		return invalidTime;
+	}
+
+	public void setInvalidTime(String invalidTime) {
+		this.invalidTime = invalidTime;
+	}
+
+	public void setRegistTime(String registTime) {
+		this.registTime = registTime;
+	}
+
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ldp.datahub.common.Constant;
 import com.ldp.datahub.entity.VipVo;
+import com.ldp.datahub.exception.LinkServerException;
 import com.ldp.datahub.service.UserService;
 import com.ldp.datahub.service.VipService;
 import com.ldp.datahub.vo.UserVo;
@@ -100,12 +101,32 @@ public class VipAction extends BaseAction
 			JSONObject requestJson = JSONObject.fromObject(body);
 			String userType = requestJson.getString("userType");
 			
-			int meID = userService.getUserId(me);
-			vipService.updateUserType(loginName, Integer.parseInt(userType), meID);
+			String validity = requestJson.getString("validity");
 			
-			jsonMap.put(Constant.result_code, Constant.sucess_code);
-			jsonMap.put(Constant.result_msg, Constant.sucess);
-		}catch(JSONException je){
+			int years = Integer.parseInt(validity);
+			int type = Integer.parseInt(userType);
+			if(years<=0||type<=0||type>5){
+				log.error("修改<"+loginName+">会员级别失败，请求参数错误");
+				jsonMap.put(Constant.result_code, Constant.param_err_code);
+				jsonMap.put(Constant.result_msg, Constant.param_err);
+			}
+			
+			int meID = userService.getUserId(me);
+			boolean update = vipService.updateUserType(loginName,type ,years, meID);
+			if(update){
+				jsonMap.put(Constant.result_code, Constant.sucess_code);
+				jsonMap.put(Constant.result_msg, Constant.sucess);
+			}else{
+				jsonMap.put(Constant.result_code, Constant.no_money_code);
+				jsonMap.put(Constant.result_msg, Constant.no_money);
+			}
+			
+		}catch(LinkServerException le){
+			log.error("修改<"+loginName+">会员级别失败，链接bill服务错误");
+			jsonMap.put(Constant.result_code, Constant.server_link_code);
+			jsonMap.put(Constant.result_msg, Constant.server_link);
+		}
+		catch(JSONException je){
 			log.error("修改<"+loginName+">会员级别失败，请求参数错误");
 			jsonMap.put(Constant.result_code, Constant.param_err_code);
 			jsonMap.put(Constant.result_msg, Constant.param_err);

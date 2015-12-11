@@ -10,6 +10,11 @@
         <property name="jdbc.batch_size">20</property>
         <property name="connection.autocommit">true</property>
         <property name="hbm2ddl.auto">update</property>
+        
+        <property name="hibernate.c3p0.acquire_increment">1</property> 
+        <property name="hibernate.c3p0.idle_test_period">0</property> 
+        <property name="hibernate.c3p0.timeout">100</property>
+        <property name="hibernate.c3p0.validate">true</property>
 
         <!-- 显示sql语句 -->
         <property name="show_sql">true</property>

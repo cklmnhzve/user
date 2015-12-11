@@ -40,7 +40,6 @@ public class UserAction extends BaseAction
 
 	@Autowired
 	private UserService userService;
-	
 
 	/**
 	 * 根据用户名查询用户
@@ -60,9 +59,6 @@ public class UserAction extends BaseAction
 				jsonMap.put(Constant.result_code, Constant.sucess_code);
 				jsonMap.put(Constant.result_msg, Constant.sucess);
 				jsonMap.put(Constant.result_data, user);
-				if(loginName.equals(me)){
-					
-				}
 				
 			}else{
 				log.error(loginName+" 不存在");
@@ -218,7 +214,6 @@ public class UserAction extends BaseAction
 					//管理员
 					Object status = requestJson.get("userstatus");
 					Object username = requestJson.get("username");
-					Object destoryed =  requestJson.get("destoryed");
 					
 					if(status!=null&&StringUtils.isNotEmpty(status.toString())){
 						user.setUserStatus(Integer.parseInt(status.toString()));
@@ -227,19 +222,6 @@ public class UserAction extends BaseAction
 						user.setUserName(username.toString());
 					}
 					
-					if(destoryed!=null&&StringUtils.isNotEmpty(destoryed.toString())){
-						if(user.getUserStatus()>0 && Integer.parseInt(destoryed.toString())==Constant.userStatus.DESTROY){
-							UserVo uu = userService.getUser(loginName);
-							if(uu!=null){
-								log.info(me+" 修改用户："+loginName+",失败，已存在激活的用户");
-								jsonMap.put(Constant.result_code, Constant.exist_user_code);
-								jsonMap.put(Constant.result_msg, Constant.exist_user);
-								return;
-							}else{
-								user.setDestoryed(true);
-							}
-						}
-					}
 				}else if(!me.equals(loginName)){
 					log.info(me+" 修改用户："+loginName+",没有权限");
 					jsonMap.put(Constant.result_code, Constant.no_auth_code);

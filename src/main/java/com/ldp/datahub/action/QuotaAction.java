@@ -436,7 +436,7 @@ public class QuotaAction extends BaseAction{
 		Map<String, Object> jsonMap = new HashMap<String, Object>();
 		String me = request.getHeader("USER");
 		try {
-			if(!isAdminOrI(me, loginName, jsonMap)){
+			if(!isAdmin(me, jsonMap)){
 				return;
 			}
 			JSONObject requestJson = JSONObject.fromObject(body);

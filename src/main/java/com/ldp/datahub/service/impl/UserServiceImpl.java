@@ -1,6 +1,8 @@
 package com.ldp.datahub.service.impl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import com.ldp.datahub.vo.UserVo;
 @Service
 public class UserServiceImpl implements UserService
 {
+	private static SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 	@Autowired
 	private UserDao userDao;
 	@Autowired
@@ -44,6 +47,10 @@ public class UserServiceImpl implements UserService
 		vo.setUserName(user.getUserName());
 		vo.setUserType(user.getUserType());
 		vo.setUserStatus(user.getUserStatus());
+		vo.setRegistTime(df.format(new Date(user.getOpTime().getTime())));
+		if(user.getInvalidTime()!=null){
+			vo.setInvalidTime(df.format(new Date(user.getInvalidTime().getTime())));
+		}
 		return vo;
 	}
 	

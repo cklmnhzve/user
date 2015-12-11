@@ -21,15 +21,13 @@ public class User
 	private String summary;
 	
 	private Timestamp opTime;
+	private Timestamp invalidTime;
 	
-	private boolean isDestoryed;
-	
-	
-	public boolean isDestoryed() {
-		return isDestoryed;
+	public Timestamp getInvalidTime() {
+		return invalidTime;
 	}
-	public void setDestoryed(boolean isDestoryed) {
-		this.isDestoryed = isDestoryed;
+	public void setInvalidTime(Timestamp invalidTime) {
+		this.invalidTime = invalidTime;
 	}
 	public Timestamp getOpTime() {
 		return opTime;
