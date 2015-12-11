@@ -136,7 +136,12 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			sql.append(" USER_TYPE=?,");
 			args.add(user.getUserType());
 		}
+		if(user.getInvalidTime()!=null){
+			sql.append(" INVALID_TIME=?,");
+			args.add(user.getInvalidTime());
+		}
 		
+		sql.delete(sql.length(),sql.length()+1);
 		sql.append(" WHERE LOGIN_NAME=? ");
 		
 		sql.append("AND USER_STATUS<?");
@@ -187,7 +192,7 @@ public class UserDaoImpl extends BaseJdbcDao implements UserDao
 			Map<String, Object> map = getJdbcTemplate().queryForMap(sql.toString());
 			if(!map.containsKey("INVALID_TIME")){
 				sql = new StringBuilder();
-				sql.append("ALTER TABLE DH_USER ADD INVALID_TIME TIMESTAMP;");
+				sql.append("ALTER TABLE DH_USER ADD INVALID_TIME TIMESTAMP NULL;");
 				getJdbcTemplate().execute(sql.toString());
 			}
 		} catch (Exception e) {
